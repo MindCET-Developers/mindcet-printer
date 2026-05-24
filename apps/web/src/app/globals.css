@@ -414,6 +414,15 @@ textarea:focus {
   border-top: 8px solid var(--mind-yellow);
 }
 
+.admin-login-card-spaced {
+  margin-top: 1.25rem;
+}
+
+.admin-login-alert {
+  width: min(820px, 100%);
+  margin-top: 1rem;
+}
+
 .details-list,
 .compact-list {
   display: grid;
