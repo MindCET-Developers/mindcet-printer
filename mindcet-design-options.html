@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintDesk x MindCET - הצעות עיצוב</title>
+    <style>
+        :root {
+            --ink: #15212f;
+            --muted: #66758a;
+            --paper: #f7f9fc;
+            --panel: #ffffff;
+            --line: #dce5ee;
+            --mind-blue: #117b9a;
+            --mind-deep: #113c55;
+            --mind-yellow: #ffd84d;
+            --mind-orange: #ff8c42;
+            --mind-pink: #ee4f8f;
+            --mind-green: #24b47e;
+            --mind-cyan: #50c7e8;
+            --shadow: 0 18px 46px rgba(21, 33, 47, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: "Segoe UI", Arial, sans-serif;
+            line-height: 1.55;
+        }
+
+        .page {
+            width: min(1380px, 100%);
+            margin: 0 auto;
+            padding: 28px 22px 64px;
+        }
+
+        .hero {
+            min-height: 360px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(320px, 0.55fr);
+            align-items: center;
+            gap: 28px;
+            padding: 28px 0 36px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .brand img {
+            width: 132px;
+            max-height: 58px;
+            object-fit: contain;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .brand-title {
+            border-right: 5px solid var(--mind-yellow);
+            padding-right: 14px;
+        }
+
+        .brand-title strong {
+            display: block;
+            font-size: 24px;
+        }
+
+        .brand-title span {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            max-width: 760px;
+            margin-bottom: 18px;
+            font-size: clamp(42px, 6.5vw, 78px);
+            line-height: 0.98;
+            letter-spacing: 0;
+        }
+
+        h2 {
+            margin-bottom: 14px;
+            font-size: 32px;
+            letter-spacing: 0;
+        }
+
+        h3 {
+            margin-bottom: 8px;
+            font-size: 24px;
+            letter-spacing: 0;
+        }
+
+        .lead {
+            max-width: 760px;
+            color: #35475c;
+            font-size: 21px;
+        }
+
+        .source-note {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .source-note ul {
+            margin: 0;
+            padding-right: 18px;
+        }
+
+        .palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .swatch {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 20px;
+            margin: 44px 0 20px;
+        }
+
+        .section-head p {
+            max-width: 680px;
+            margin-bottom: 0;
+            color: var(--muted);
+            font-weight: 650;
+        }
+
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .option {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 12px 32px rgba(21, 33, 47, 0.08);
+        }
+
+        .option-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .option-head h3 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .option-head p {
+            margin: 2px 0 0;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .mini-logo {
+            width: 92px;
+            height: 42px;
+            object-fit: contain;
+        }
+
+        .mock {
+            min-height: 440px;
+            padding: 18px;
+            display: grid;
+            grid-template-rows: 1fr auto;
+            gap: 14px;
+        }
+
+        .screen-pair {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .screen {
+            min-height: 330px;
+            border: 1px solid rgba(21, 33, 47, 0.11);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .screen-top {
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px;
+            border-bottom: 1px solid rgba(21, 33, 47, 0.1);
+        }
+
+        .screen-top img {
+            width: 80px;
+            max-height: 34px;
+            object-fit: contain;
+        }
+
+        .badge {
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .screen-body {
+            padding: 14px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .line,
+        .button,
+        .field,
+        .stat,
+        .row,
+        .doc {
+            border-radius: 7px;
+        }
+
+        .line {
+            height: 12px;
+            background: #dbe4ee;
+        }
+
+        .line.short {
+            width: 58%;
+        }
+
+        .line.title {
+            width: 72%;
+            height: 24px;
+        }
+
+        .field {
+            height: 42px;
+            border: 1px solid rgba(21, 33, 47, 0.13);
+            background: #fff;
+        }
+
+        .button {
+            height: 44px;
+        }
+
+        .dropzone {
+            min-height: 110px;
+            border: 2px dashed rgba(21, 33, 47, 0.18);
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+        }
+
+        .doc {
+            width: 58px;
+            height: 76px;
+            display: grid;
+            place-items: end center;
+            padding-bottom: 10px;
+            font-size: 12px;
+            font-weight: 950;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 74px 1fr;
+            min-height: 330px;
+        }
+
+        .side {
+            padding: 12px 8px;
+            display: grid;
+            align-content: start;
+            gap: 8px;
+        }
+
+        .side span {
+            height: 30px;
+            border-radius: 7px;
+        }
+
+        .ops {
+            padding: 12px;
+            display: grid;
+            grid-template-rows: 46px 58px 1fr;
+            gap: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .stat {
+            border: 1px solid rgba(21, 33, 47, 0.12);
+        }
+
+        .table {
+            display: grid;
+            gap: 8px;
+        }
+
+        .row {
+            height: 36px;
+            border: 1px solid rgba(21, 33, 47, 0.1);
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .notes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            padding: 0 18px 18px;
+        }
+
+        .notes h4 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+
+        .notes ul {
+            margin: 0;
+            padding-right: 18px;
+            color: #435367;
+        }
+
+        .notes li {
+            margin-bottom: 6px;
+        }
+
+        .recommend {
+            margin-top: 28px;
+            border: 1px solid #cfe6ef;
+            background: #eef9fc;
+            color: #16465c;
+            border-radius: 8px;
+            padding: 18px 20px;
+            font-weight: 750;
+        }
+
+        /* Option 1 */
+        .sunny .mock {
+            background: #fff8d9;
+        }
+
+        .sunny .screen-top {
+            background: #ffffff;
+        }
+
+        .sunny .badge {
+            background: var(--mind-yellow);
+            color: #2d2300;
+        }
+
+        .sunny .line.title,
+        .sunny .button {
+            background: var(--mind-blue);
+        }
+
+        .sunny .dropzone {
+            background: #fffdf2;
+            border-color: #f1c93d;
+        }
+
+        .sunny .doc {
+            background: #fff;
+            color: var(--mind-pink);
+            border: 1px solid #f1c93d;
+        }
+
+        .sunny .side {
+            background: var(--mind-deep);
+        }
+
+        .sunny .side span {
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .sunny .stat {
+            background: #fff4bf;
+        }
+
+        /* Option 2 */
+        .studio .mock {
+            background: #f1f7ff;
+        }
+
+        .studio .screen {
+            border-color: rgba(17, 123, 154, 0.24);
+        }
+
+        .studio .screen-top {
+            background: var(--mind-deep);
+            color: #fff;
+        }
+
+        .studio .screen-top img {
+            filter: brightness(0) invert(1);
+        }
+
+        .studio .badge {
+            background: var(--mind-cyan);
+            color: #062e3b;
+        }
+
+        .studio .line.title {
+            background: var(--mind-pink);
+        }
+
+        .studio .button {
+            background: var(--mind-yellow);
+        }
+
+        .studio .dropzone {
+            background: #ffffff;
+            border-color: var(--mind-cyan);
+        }
+
+        .studio .doc {
+            background: #ffe6f1;
+            color: var(--mind-pink);
+        }
+
+        .studio .side {
+            background: #ffffff;
+            border-left: 1px solid rgba(21, 33, 47, 0.1);
+        }
+
+        .studio .side span {
+            background: #dff6fb;
+        }
+
+        .studio .stat {
+            background: #eef7ff;
+        }
+
+        /* Option 3 */
+        .workshop .mock {
+            background: #eef8f5;
+        }
+
+        .workshop .screen-top {
+            background: #ffffff;
+        }
+
+        .workshop .badge {
+            background: #dff5eb;
+            color: var(--mind-green);
+        }
+
+        .workshop .line.title,
+        .workshop .button {
+            background: var(--mind-green);
+        }
+
+        .workshop .dropzone {
+            background: #ffffff;
+            border-color: #83d7b5;
+        }
+
+        .workshop .doc {
+            background: #edfff7;
+            color: var(--mind-green);
+            border: 1px solid #a3e4c8;
+        }
+
+        .workshop .side {
+            background: #1b4d45;
+        }
+
+        .workshop .side span {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .workshop .stat {
+            background: #e6f8ef;
+        }
+
+        /* Option 4 */
+        .playful .mock {
+            background: #fff1f6;
+        }
+
+        .playful .screen-top {
+            background: linear-gradient(90deg, var(--mind-pink), var(--mind-orange));
+            color: #fff;
+        }
+
+        .playful .screen-top img {
+            filter: brightness(0) invert(1);
+        }
+
+        .playful .badge {
+            background: #fff;
+            color: var(--mind-pink);
+        }
+
+        .playful .line.title {
+            background: var(--mind-orange);
+        }
+
+        .playful .button {
+            background: var(--mind-pink);
+        }
+
+        .playful .dropzone {
+            background: #ffffff;
+            border-color: #ff9bc0;
+        }
+
+        .playful .doc {
+            background: #fff3df;
+            color: var(--mind-orange);
+            border: 1px solid #ffd09f;
+        }
+
+        .playful .side {
+            background: #2a1830;
+        }
+
+        .playful .side span {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .playful .stat {
+            background: #ffe5ee;
+        }
+
+        @media (max-width: 980px) {
+            .hero,
+            .design-grid,
+            .screen-pair,
+            .notes {
+                grid-template-columns: 1fr;
+            }
+
+            .section-head {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <div>
+                <div class="brand">
+                    <img src="https://www.mindcet.org/wp-content/uploads/2022/04/Logo.svg" alt="MindCET">
+                    <div class="brand-title">
+                        <strong>מתחם MindCET - מרחב עבודה</strong>
+                        <span>PrintDesk · הצעות לעיצוב האפליקציה</span>
+                    </div>
+                </div>
+                <h1>4 כיווני עיצוב לפני פיתוח</h1>
+                <p class="lead">
+                    המטרה: להפוך את מסך המשתמש לפשוט, נעים וברור, ואת מסך המנהל לתפעולי, מהיר וצבעוני.
+                    כל אופציה שומרת על אותה היררכיה: העלאת PDF למשתמש הקצה, ותור עבודות למנהל.
+                </p>
+            </div>
+            <aside class="source-note">
+                <h2>השראה חזותית</h2>
+                <ul>
+                    <li>לוגו MindCET הרשמי מהאתר.</li>
+                    <li>פלטה בהירה עם כחול/טורקיז, צהוב ואנרגיה צבעונית.</li>
+                    <li>שפה שמתאימה למרכז חדשנות: נקייה, חכמה, אבל לא קרה.</li>
+                </ul>
+                <div class="palette" aria-label="צבעים">
+                    <span class="swatch" style="background:#117b9a"></span>
+                    <span class="swatch" style="background:#113c55"></span>
+                    <span class="swatch" style="background:#ffd84d"></span>
+                    <span class="swatch" style="background:#50c7e8"></span>
+                    <span class="swatch" style="background:#ee4f8f"></span>
+                    <span class="swatch" style="background:#24b47e"></span>
+                </div>
+            </aside>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">השוואת כיוונים</p>
+                    <h2>גריד סקיצות</h2>
+                </div>
+                <p>
+                    בכל כרטיס: צד ימין מדמה את מסך המשתמש הפשוט, צד שמאל את מסך המנהל התפעולי.
+                    הכותרת היא מילה אחת שמאפיינת את האופי.
+                </p>
+            </div>
+
+            <div class="design-grid">
+                <article class="option sunny">
+                    <div class="option-head">
+                        <div>
+                            <h3>שמשי</h3>
+                            <p>חם, מזמין, קל להבנה</p>
+                        </div>
+                        <img class="mini-logo" src="https://www.mindcet.org/wp-content/uploads/2022/04/Logo.svg" alt="MindCET">
+                    </div>
+                    <div class="mock">
+                        <div class="screen-pair">
+                            <div class="screen">
+                                <div class="screen-top">
+                                    <img src="https://www.mindcet.org/wp-content/uploads/2022/04/Logo.svg" alt="">
+                                    <span class="badge">משתמש</span>
+                                </div>
+                                <div class="screen-body">
+                                    <span class="line title"></span>
+                                    <span class="line short"></span>
+                                    <span class="field"></span>
+                                    <span class="field"></span>
+                                    <div class="dropzone"><span class="doc">PDF</span></div>
+                                    <span class="button"></span>
+                                </div>
+                            </div>
+                            <div class="screen">
+                                <div class="admin-grid">
+                                    <div class="side"><span></span><span></span><span></span><span></span></div>
+                                    <div class="ops">
+                                        <span class="line title"></span>
+                                        <div class="stats"><span class="stat"></span><span class="stat"></span><span class="stat"></span></div>
+                                        <div class="table"><span class="row"></span><span class="row"></span><span class="row"></span><span class="row"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notes">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>הכי ידידותי למשתמש מזדמן.</li>
+                                <li>מרגיש מחובר למרחב עבודה חם וקהילתי.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>פחות חד ופרימיום.</li>
+                                <li>צהוב דומיננטי דורש מינון מדויק.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="option studio">
+                    <div class="option-head">
+                        <div>
+                            <h3>סטודיו</h3>
+                            <p>חדשני, יצירתי, טכנולוגי</p>
+                        </div>
+                        <img class="mini-logo" src="https://www.mindcet.org/wp-content/uploads/2022/04/Logo.svg" alt="MindCET">
+                    </div>
+                    <div class="mock">
+                        <div class="screen-pair">
+                            <div class="screen">
+                                <div class="screen-top">
+                                    <img src="https://www.mindcet.org/wp-content/uploads/2022/04/Logo.svg" alt="">
+                                    <span class="badge">משתמש</span>
+                                </div>
+                                <div class="screen-body">
+                                    <span class="line title"></span>
+                                    <span class="line short"></span>
+                                    <span class="field"></span>
+                                    <span class="field"></span>
+                                    <div class="dropzone"><span class="doc">PDF</span></div>
+                                    <span class="button"></span>
+                                </div>
+                            </div>
+                            <div class="screen">
+                                <div class="admin-grid">
+                                    <div class="side"><span></span><span></span><span></span><span></span></div>
+                                    <div class="ops">
+                                        <span class="line title"></span>
+                                        <div class="stats"><span class="stat"></span><span class="stat"></span><span class="stat"></span></div>
+                                        <div class="table"><span class="row"></span><span class="row"></span><span class="row"></span><span class="row"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notes">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>הכי “MindCET חדשנות”.</li>
+                                <li>נותן תחושה צעירה ומתקדמת.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>עשוי להיות צבעוני מדי לכלי תפעולי.</li>
+                                <li>צריך להיזהר מניגודיות בלוגו לבן.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="option workshop">
+                    <div class="option-head">
+                        <div>
+                            <h3>סדנה</h3>
+                            <p>שקט, מקצועי, עובד טוב ביום-יום</p>
+                        </div>
+                        <img class="mini-logo" src="https://www.mindcet.org/wp-content/uploads/2022/04/Logo.svg" alt="MindCET">
+                    </div>
+                    <div class="mock">
+                        <div class="screen-pair">
+                            <div class="screen">
+                                <div class="screen-top">
+                                    <img src="https://www.mindcet.org/wp-content/uploads/2022/04/Logo.svg" alt="">
+                                    <span class="badge">משתמש</span>
+                                </div>
+                                <div class="screen-body">
+                                    <span class="line title"></span>
+                                    <span class="line short"></span>
+                                    <span class="field"></span>
+                                    <span class="field"></span>
+                                    <div class="dropzone"><span class="doc">PDF</span></div>
+                                    <span class="button"></span>
+                                </div>
+                            </div>
+                            <div class="screen">
+                                <div class="admin-grid">
+                                    <div class="side"><span></span><span></span><span></span><span></span></div>
+                                    <div class="ops">
+                                        <span class="line title"></span>
+                                        <div class="stats"><span class="stat"></span><span class="stat"></span><span class="stat"></span></div>
+                                        <div class="table"><span class="row"></span><span class="row"></span><span class="row"></span><span class="row"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notes">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>הכי מתאים לכלי תפעולי אמיתי.</li>
+                                <li>נעים, נגיש ולא רועש.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>פחות “וואו” בעמוד הראשון.</li>
+                                <li>דורש טיפוגרפיה חזקה כדי לא להיראות גנרי.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="option playful">
+                    <div class="option-head">
+                        <div>
+                            <h3>חי</h3>
+                            <p>בולט, אנרגטי, בעל אופי</p>
+                        </div>
+                        <img class="mini-logo" src="https://www.mindcet.org/wp-content/uploads/2022/04/Logo.svg" alt="MindCET">
+                    </div>
+                    <div class="mock">
+                        <div class="screen-pair">
+                            <div class="screen">
+                                <div class="screen-top">
+                                    <img src="https://www.mindcet.org/wp-content/uploads/2022/04/Logo.svg" alt="">
+                                    <span class="badge">משתמש</span>
+                                </div>
+                                <div class="screen-body">
+                                    <span class="line title"></span>
+                                    <span class="line short"></span>
+                                    <span class="field"></span>
+                                    <span class="field"></span>
+                                    <div class="dropzone"><span class="doc">PDF</span></div>
+                                    <span class="button"></span>
+                                </div>
+                            </div>
+                            <div class="screen">
+                                <div class="admin-grid">
+                                    <div class="side"><span></span><span></span><span></span><span></span></div>
+                                    <div class="ops">
+                                        <span class="line title"></span>
+                                        <div class="stats"><span class="stat"></span><span class="stat"></span><span class="stat"></span></div>
+                                        <div class="table"><span class="row"></span><span class="row"></span><span class="row"></span><span class="row"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notes">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>הכי זכיר וייחודי.</li>
+                                <li>יכול לעבוד טוב למסך קיוסק במתחם.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>צריך ריסון במסך מנהל.</li>
+                                <li>פחות מתאים אם רוצים שפה ארגונית שקטה.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="recommend">
+                המלצה ראשונית: לבחור ב״סדנה״ כבסיס למוצר, עם נגיעות צהוב וורוד מתוך ״סטודיו״.
+                כך המשתמש מקבל מסך פשוט ונעים, והמנהל מקבל כלי תפעולי שלא מתעייף ממנו אחרי יום עבודה.
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintDesk - מסמך מוצר, שלבים ועיצוב</title>
+    <style>
+        :root {
+            --bg: #f6f8fb;
+            --ink: #17212b;
+            --muted: #637184;
+            --panel: #ffffff;
+            --line: #dbe4ed;
+            --brand: #176b87;
+            --brand-dark: #0e475d;
+            --teal: #12857f;
+            --green: #2d8a4e;
+            --amber: #b7791f;
+            --red: #bd3f3f;
+            --violet: #6950a1;
+            --blue: #2364aa;
+            --shadow: 0 16px 44px rgba(23, 33, 43, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Segoe UI", Arial, sans-serif;
+            line-height: 1.65;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        .page {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 28px 22px 64px;
+        }
+
+        .hero {
+            min-height: 480px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr);
+            gap: 36px;
+            align-items: center;
+            padding: 28px 0 34px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .eyebrow {
+            color: var(--brand);
+            font-weight: 800;
+            margin: 0 0 10px;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            font-size: clamp(42px, 7vw, 82px);
+            line-height: 0.98;
+            letter-spacing: 0;
+            margin-bottom: 18px;
+        }
+
+        h2 {
+            font-size: 31px;
+            letter-spacing: 0;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            font-size: 21px;
+            letter-spacing: 0;
+            margin-bottom: 10px;
+        }
+
+        .lead {
+            color: #344456;
+            font-size: 22px;
+            max-width: 760px;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .chip {
+            border: 1px solid var(--line);
+            background: #fff;
+            color: #314154;
+            border-radius: 999px;
+            padding: 8px 13px;
+            font-weight: 750;
+        }
+
+        .hero-panel {
+            background: #102438;
+            color: #ecf7ff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .hero-panel-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            padding: 17px 18px;
+            background: #18334d;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-lockup {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 900;
+        }
+
+        .logo-box {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            background: #44d4b7;
+            color: #0a2a25;
+            font-weight: 950;
+        }
+
+        .live-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #c5f7e6;
+            font-weight: 750;
+        }
+
+        .live-pill::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+        }
+
+        .hero-panel-body {
+            padding: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .queue-row {
+            display: grid;
+            grid-template-columns: 44px 1fr 80px;
+            gap: 12px;
+            align-items: center;
+            padding: 13px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.11);
+        }
+
+        .doc-icon {
+            width: 44px;
+            height: 52px;
+            border-radius: 7px;
+            background: #fff;
+            position: relative;
+        }
+
+        .doc-icon::after {
+            content: "PDF";
+            position: absolute;
+            bottom: 7px;
+            right: 8px;
+            color: #bf3b3b;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .skeleton {
+            display: block;
+            height: 11px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.68);
+            margin-bottom: 8px;
+        }
+
+        .skeleton.short {
+            width: 56%;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .queue-status {
+            text-align: center;
+            border-radius: 999px;
+            padding: 5px 0;
+            font-size: 12px;
+            font-weight: 800;
+            color: #c5f7e6;
+            background: rgba(74, 222, 128, 0.13);
+        }
+
+        section {
+            padding-top: 46px;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 24px;
+            margin-bottom: 18px;
+        }
+
+        .section-head p {
+            max-width: 740px;
+            color: var(--muted);
+            margin-bottom: 0;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: 0 10px 28px rgba(23, 33, 43, 0.05);
+            padding: 22px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .card ul {
+            margin: 0;
+            padding-right: 20px;
+        }
+
+        .card li {
+            margin-bottom: 8px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+
+        .tag.cloud { background: #eaf4ff; color: var(--blue); }
+        .tag.agent { background: #e7f6ee; color: var(--green); }
+        .tag.guard { background: #fff4df; color: var(--amber); }
+        .tag.admin { background: #eee9fb; color: var(--violet); }
+
+        .diagram {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 22px;
+            box-shadow: 0 10px 28px rgba(23, 33, 43, 0.05);
+            overflow: auto;
+        }
+
+        .arch {
+            min-width: 880px;
+            display: grid;
+            grid-template-columns: 1fr 70px 1fr 70px 1fr;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .arch-box {
+            border: 1px solid #cfdbe6;
+            border-radius: 8px;
+            padding: 18px;
+            min-height: 220px;
+            background: #f9fbfd;
+        }
+
+        .arch-box h3 {
+            margin-bottom: 12px;
+        }
+
+        .arch-box span {
+            display: block;
+            border: 1px solid #d7e2ec;
+            background: #fff;
+            border-radius: 7px;
+            padding: 10px 12px;
+            margin: 8px 0;
+            color: #344456;
+            font-weight: 650;
+        }
+
+        .arrow {
+            display: grid;
+            place-items: center;
+            color: var(--brand);
+            font-size: 38px;
+            font-weight: 900;
+        }
+
+        .arrow small {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .flow {
+            min-width: 980px;
+            display: grid;
+            grid-template-columns: repeat(9, minmax(92px, 1fr));
+            gap: 10px;
+            align-items: center;
+        }
+
+        .flow-node {
+            min-height: 116px;
+            border-radius: 8px;
+            border: 1px solid #d6e2ed;
+            background: #fff;
+            padding: 12px;
+        }
+
+        .flow-node strong {
+            display: block;
+            font-size: 17px;
+            margin-bottom: 6px;
+        }
+
+        .flow-node span {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            color: var(--brand);
+            font-size: 26px;
+            font-weight: 900;
+        }
+
+        .status-map {
+            display: grid;
+            grid-template-columns: repeat(9, minmax(120px, 1fr));
+            gap: 10px;
+            min-width: 1060px;
+        }
+
+        .status {
+            border: 1px solid #d6e2ed;
+            border-top: 5px solid var(--blue);
+            background: #fff;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 128px;
+        }
+
+        .status:nth-child(2) { border-top-color: var(--teal); }
+        .status:nth-child(3) { border-top-color: var(--violet); }
+        .status:nth-child(4) { border-top-color: var(--amber); }
+        .status:nth-child(5) { border-top-color: var(--blue); }
+        .status:nth-child(6) { border-top-color: var(--green); }
+        .status:nth-child(7) { border-top-color: var(--red); }
+        .status:nth-child(8) { border-top-color: #7c8794; }
+        .status:nth-child(9) { border-top-color: #7c8794; }
+
+        .status code {
+            display: block;
+            direction: ltr;
+            text-align: left;
+            color: #213246;
+            font-weight: 900;
+            margin-bottom: 7px;
+        }
+
+        .status span {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .tabs {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .tab-list {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--line);
+            background: #f9fbfd;
+        }
+
+        .tab-button {
+            border: 0;
+            border-left: 1px solid var(--line);
+            background: transparent;
+            color: #344456;
+            cursor: pointer;
+            padding: 14px 18px;
+            white-space: nowrap;
+            font-weight: 850;
+        }
+
+        .tab-button.active {
+            background: #fff;
+            color: var(--brand-dark);
+            box-shadow: inset 0 -3px 0 var(--brand);
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 24px;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .phase-grid {
+            display: grid;
+            grid-template-columns: 220px 1fr 1fr;
+            gap: 14px;
+        }
+
+        .phase-grid > div {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 16px;
+            background: #fbfdff;
+        }
+
+        .phase-title {
+            font-weight: 900;
+            color: var(--brand-dark);
+        }
+
+        .phase-grid ul {
+            margin: 0;
+            padding-right: 18px;
+        }
+
+        .schema-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .schema-table th,
+        .schema-table td {
+            border-bottom: 1px solid var(--line);
+            padding: 10px 12px;
+            text-align: right;
+            vertical-align: top;
+        }
+
+        .schema-table th {
+            background: #f0f6fb;
+            color: #26394d;
+        }
+
+        .schema-table code {
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .design-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 28px rgba(23, 33, 43, 0.06);
+        }
+
+        .design-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .design-head h3 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .design-head p {
+            margin: 0;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .mock {
+            height: 360px;
+            padding: 18px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .mock-kiosk {
+            background: #eef8fb;
+            grid-template-rows: 86px 1fr 64px;
+        }
+
+        .mock-admin {
+            background: #f8fafc;
+            grid-template-columns: 150px 1fr;
+        }
+
+        .mock-trust {
+            background: #f6fbf7;
+            grid-template-rows: 76px 1fr;
+        }
+
+        .mock-pro {
+            background: #fffaf0;
+            grid-template-rows: 64px 1fr;
+        }
+
+        .mock-block {
+            background: #fff;
+            border: 1px solid #d8e3ec;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .mock-line {
+            height: 12px;
+            border-radius: 999px;
+            background: #d8e3ec;
+            margin: 10px 0;
+        }
+
+        .mock-line.short {
+            width: 58%;
+        }
+
+        .mock-line.brand {
+            background: #b9e8ef;
+            width: 46%;
+            height: 18px;
+        }
+
+        .mock-upload {
+            border: 2px dashed #7fb9c7;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            background: #fff;
+        }
+
+        .mock-upload span {
+            width: 92px;
+            height: 112px;
+            border-radius: 8px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            position: relative;
+        }
+
+        .mock-upload span::after {
+            content: "PDF";
+            position: absolute;
+            bottom: 14px;
+            right: 22px;
+            color: #b91c1c;
+            font-weight: 950;
+        }
+
+        .mock-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .mock-actions span,
+        .mock-stats span {
+            border-radius: 7px;
+            background: #dff4ec;
+        }
+
+        .mock-sidebar {
+            border-radius: 8px;
+            background: #1f2c3a;
+            padding: 12px;
+            display: grid;
+            align-content: start;
+            gap: 10px;
+        }
+
+        .mock-sidebar span {
+            height: 30px;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .mock-work {
+            display: grid;
+            grid-template-rows: 58px 78px 1fr;
+            gap: 12px;
+        }
+
+        .mock-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .timeline {
+            display: grid;
+            gap: 12px;
+        }
+
+        .time-row {
+            display: grid;
+            grid-template-columns: 30px 1fr;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #2d8a4e;
+            margin-top: 7px;
+        }
+
+        .split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding: 18px 20px 22px;
+            border-top: 1px solid var(--line);
+        }
+
+        .pros-cons h4 {
+            margin: 0 0 8px;
+        }
+
+        .pros-cons ul {
+            margin: 0;
+            padding-right: 18px;
+        }
+
+        .callout {
+            border: 1px solid #cfe2f3;
+            background: #eef7ff;
+            border-radius: 8px;
+            color: #21476f;
+            padding: 17px 20px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 980px) {
+            .hero,
+            .grid-2,
+            .grid-3,
+            .design-grid,
+            .phase-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-head {
+                display: block;
+            }
+
+            .mock-admin,
+            .split {
+                grid-template-columns: 1fr;
+            }
+
+            .mock {
+                min-height: 360px;
+                height: auto;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .page {
+                max-width: none;
+                padding: 16px;
+            }
+
+            .card,
+            .diagram,
+            .tabs,
+            .design-card,
+            .hero-panel {
+                box-shadow: none;
+            }
+
+            .tab-panel {
+                display: block;
+                border-top: 1px solid var(--line);
+            }
+
+            .tab-list {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">PrintDesk - Web-to-Print Portal</p>
+                <h1>מסמך מוצר, שלבים ועיצוב</h1>
+                <p class="lead">
+                    PrintDesk הוא פורטל הדפסה למרחבי עבודה: משתמש מעלה PDF באתר, הענן שומר ומנהל את העבודה,
+                    וסוכן Windows מקומי מושך החוצה את העבודה ומדפיס במדפסת הפיזית. המחשב המקומי תמיד יוזם תקשורת אל הענן.
+                </p>
+                <div class="chips">
+                    <span class="chip">Next.js</span>
+                    <span class="chip">Supabase</span>
+                    <span class="chip">Storage פרטי</span>
+                    <span class="chip">Agent ל-Windows</span>
+                    <span class="chip">PDF בלבד ב-MVP</span>
+                </div>
+            </div>
+            <aside class="hero-panel">
+                <div class="hero-panel-top">
+                    <div class="brand-lockup"><span class="logo-box">P</span><span>PrintDesk</span></div>
+                    <div class="live-pill">תור פעיל</div>
+                </div>
+                <div class="hero-panel-body">
+                    <div class="queue-row">
+                        <span class="doc-icon"></span>
+                        <span><span class="skeleton"></span><span class="skeleton short"></span></span>
+                        <span class="queue-status">ממתין</span>
+                    </div>
+                    <div class="queue-row">
+                        <span class="doc-icon"></span>
+                        <span><span class="skeleton"></span><span class="skeleton short"></span></span>
+                        <span class="queue-status">הדפסה</span>
+                    </div>
+                    <div class="queue-row">
+                        <span class="doc-icon"></span>
+                        <span><span class="skeleton"></span><span class="skeleton short"></span></span>
+                        <span class="queue-status">הודפס</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">עקרונות מוצר</p>
+                    <h2>מה בונים ולמה</h2>
+                </div>
+                <p>המוצר מחליף תהליך ידני של שליחת מסמכים למנהל המרחב בתהליך שקוף, מוגבל, מאובטח וקל לתפעול.</p>
+            </div>
+            <div class="grid-3">
+                <article class="card">
+                    <span class="tag cloud">ענן</span>
+                    <h3>ניהול עבודות</h3>
+                    <ul>
+                        <li>טופס העלאת PDF למשתמשים.</li>
+                        <li>שמירת קבצים ב-Supabase Storage פרטי.</li>
+                        <li>טבלת עבודות עם סטטוס ברור לכל שלב.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <span class="tag agent">סוכן מקומי</span>
+                    <h3>הדפסה בטוחה</h3>
+                    <ul>
+                        <li>מחשב Windows מקומי מושך עבודות מהענן.</li>
+                        <li>אין פתיחת פורטים ואין חשיפת מדפסת לרשת.</li>
+                        <li>הדפסה שקטה של PDF דרך SumatraPDF.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <span class="tag guard">מגבלות</span>
+                    <h3>MVP ממוקד</h3>
+                    <ul>
+                        <li>PDF בלבד.</li>
+                        <li>מגבלת גודל, עותקים ותצוגת סטטוס.</li>
+                        <li>אין הדפסה אנונימית בלתי מוגבלת.</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">דיאגרמת ארכיטקטורה</p>
+                    <h2>הענן לא נכנס פנימה, המקומי יוצא החוצה</h2>
+                </div>
+                <p>כל התקשורת הרגישה נעשית ביוזמת המחשב המקומי מול Supabase. אין תלות ברשת פנימית פתוחה.</p>
+            </div>
+            <div class="diagram">
+                <div class="arch">
+                    <div class="arch-box">
+                        <h3>משתמשים</h3>
+                        <span>דף העלאת PDF</span>
+                        <span>תצוגה מקדימה</span>
+                        <span>עמוד סטטוס עם token</span>
+                    </div>
+                    <div class="arrow">←<small>HTTPS</small></div>
+                    <div class="arch-box">
+                        <h3>Cloud App</h3>
+                        <span>Next.js API Routes</span>
+                        <span>Supabase Auth לאדמין</span>
+                        <span>Database + Storage</span>
+                    </div>
+                    <div class="arrow">←<small>Polling החוצה</small></div>
+                    <div class="arch-box">
+                        <h3>Windows Agent</h3>
+                        <span>Claim אטומי לעבודה אחת</span>
+                        <span>הורדת PDF פרטי</span>
+                        <span>SumatraPDF → מדפסת</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">זרימת משתמש</p>
+                    <h2>מהרגע שהקובץ עולה ועד ההדפסה</h2>
+                </div>
+            </div>
+            <div class="diagram">
+                <div class="flow">
+                    <div class="flow-node"><strong>העלאה</strong><span>שם, פרטים, PDF, עותקים והעדפות.</span></div>
+                    <div class="flow-arrow">←</div>
+                    <div class="flow-node"><strong>בדיקה</strong><span>PDF בלבד, גודל, קובץ יחיד ואישור משתמש.</span></div>
+                    <div class="flow-arrow">←</div>
+                    <div class="flow-node"><strong>שמירה</strong><span>יצירת job ושמירת הקובץ בבאקט פרטי.</span></div>
+                    <div class="flow-arrow">←</div>
+                    <div class="flow-node"><strong>תור</strong><span>pending לאישור או approved להדפסה.</span></div>
+                    <div class="flow-arrow">←</div>
+                    <div class="flow-node"><strong>Agent</strong><span>Claim, הורדה, הדפסה ועדכון סטטוס.</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">סטטוסים</p>
+                    <h2>מפת מצב מלאה</h2>
+                </div>
+                <p>כל עבודה חייבת להיות במצב ברור, כדי שמשתמש, אדמין וסוכן הדפסה יבינו מה קורה.</p>
+            </div>
+            <div class="diagram">
+                <div class="status-map">
+                    <div class="status"><code>pending</code><span>ממתין לאישור מנהל.</span></div>
+                    <div class="status"><code>approved</code><span>מאושר וממתין בתור לסוכן.</span></div>
+                    <div class="status"><code>claimed</code><span>הסוכן תפס את העבודה.</span></div>
+                    <div class="status"><code>downloading</code><span>הקובץ יורד למחשב המקומי.</span></div>
+                    <div class="status"><code>printing</code><span>הקובץ נשלח למדפסת.</span></div>
+                    <div class="status"><code>printed</code><span>הפקודה הסתיימה בהצלחה.</span></div>
+                    <div class="status"><code>failed</code><span>נכשל ויש להציג סיבה.</span></div>
+                    <div class="status"><code>cancelled</code><span>בוטל לפני הדפסה.</span></div>
+                    <div class="status"><code>rejected</code><span>נדחה על ידי אדמין.</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">טאבים</p>
+                    <h2>כל שלבי המימוש</h2>
+                </div>
+                <p>הטאבים מפרקים את הפרויקט לשלבים, בלי לקפוץ ישר למוצר ענק מדי.</p>
+            </div>
+            <div class="tabs" data-tabs>
+                <div class="tab-list" role="tablist" aria-label="שלבי הפרויקט">
+                    <button class="tab-button active" type="button" data-tab="phase-0">0. Setup</button>
+                    <button class="tab-button" type="button" data-tab="phase-1">1. Database</button>
+                    <button class="tab-button" type="button" data-tab="phase-2">2. Web MVP</button>
+                    <button class="tab-button" type="button" data-tab="phase-3">3. API</button>
+                    <button class="tab-button" type="button" data-tab="phase-4">4. Agent</button>
+                    <button class="tab-button" type="button" data-tab="phase-5">5. Security</button>
+                    <button class="tab-button" type="button" data-tab="phase-6">6. Approval</button>
+                    <button class="tab-button" type="button" data-tab="phase-7">7. Testing</button>
+                    <button class="tab-button" type="button" data-tab="phase-8">8. Deploy</button>
+                    <button class="tab-button" type="button" data-tab="phase-9">9. Future</button>
+                </div>
+
+                <div class="tab-panel active" id="phase-0">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 0</div><p>Project Setup</p></div>
+                        <div>
+                            <h3>תכולה</h3>
+                            <ul>
+                                <li>Monorepo עם `apps/web` ו-`apps/agent`.</li>
+                                <li>Next.js TypeScript ל-Web.</li>
+                                <li>Node.js TypeScript לסוכן המקומי.</li>
+                                <li>קבצי `.env.example` ללא סודות.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>תוצר</h3>
+                            <ul>
+                                <li>אפשר להריץ Web מקומי.</li>
+                                <li>אפשר להריץ Agent bootstrap.</li>
+                                <li>ה-email-to-print נשאר כ-Legacy side feature.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="phase-1">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 1</div><p>Database Design</p></div>
+                        <div>
+                            <h3>תכולה</h3>
+                            <ul>
+                                <li>`print_jobs`, `print_agents`, `app_settings`.</li>
+                                <li>Bucket פרטי: `print-files`.</li>
+                                <li>RLS בסיסי ו-RPCs.</li>
+                                <li>`status_token` לצפייה ציבורית בטוחה.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>החלטות</h3>
+                            <ul>
+                                <li>ה-Agent משתמש ב-service role key.</li>
+                                <li>Claim נעשה אטומית עם `FOR UPDATE SKIP LOCKED`.</li>
+                                <li>קבצים לא ציבוריים, רק signed URL כשצריך.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="phase-2">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 2</div><p>Web App MVP</p></div>
+                        <div>
+                            <h3>מסכים</h3>
+                            <ul>
+                                <li>עמוד העלאה ציבורי בעברית.</li>
+                                <li>תצוגה מקדימה של PDF בדפדפן אם אפשר.</li>
+                                <li>עמוד סטטוס עם token.</li>
+                                <li>אדמין: תור, פרטי עבודה, הגדרות וסוכנים.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>ולידציה</h3>
+                            <ul>
+                                <li>PDF בלבד וקובץ יחיד.</li>
+                                <li>מגבלת גודל ועותקים.</li>
+                                <li>שגיאות ברורות ולא טכניות.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="phase-3">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 3</div><p>API Routes</p></div>
+                        <div>
+                            <h3>Endpoints</h3>
+                            <ul>
+                                <li>`POST /api/jobs/create`.</li>
+                                <li>`GET /api/jobs/status`.</li>
+                                <li>פעולות אדמין: approve, reject, cancel, retry, mark-printed.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>אבטחה</h3>
+                            <ul>
+                                <li>service role רק בשרת.</li>
+                                <li>אדמין נבדק גם לפי Supabase Auth וגם לפי `ADMIN_EMAILS`.</li>
+                                <li>אין חשיפת URL לקובץ בעמוד הסטטוס.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="phase-4">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 4</div><p>Local Print Agent</p></div>
+                        <div>
+                            <h3>זרימה</h3>
+                            <ul>
+                                <li>Heartbeat ל-`print_agents`.</li>
+                                <li>Claim לעבודה אחת בכל פעם.</li>
+                                <li>הורדת PDF ל-`DOWNLOAD_DIR`.</li>
+                                <li>הדפסה דרך SumatraPDF.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>בדיקה</h3>
+                            <ul>
+                                <li>`AGENT_DRY_RUN=true` לסימולציה.</li>
+                                <li>שגיאות נשמרות ב-`error_message` ו-`agent_log`.</li>
+                                <li>כיבוי מסודר מעדכן `offline`.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="phase-5">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 5</div><p>Security & Abuse</p></div>
+                        <div>
+                            <h3>הגנות</h3>
+                            <ul>
+                                <li>PDF בלבד, גודל מוגבל, עותקים מוגבלים.</li>
+                                <li>קוד העלאה אופציונלי למשתמשי המרחב.</li>
+                                <li>Rate limiting במבנה ברור להמשך.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>פרטיות</h3>
+                            <ul>
+                                <li>Storage פרטי.</li>
+                                <li>Signed URLs קצרים לאדמין.</li>
+                                <li>תכנון ניקוי קבצים ישנים.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="phase-6">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 6</div><p>Approval Mode</p></div>
+                        <div>
+                            <h3>שני מצבים</h3>
+                            <ul>
+                                <li>Auto-print: העלאה יוצרת עבודה `approved`.</li>
+                                <li>Manual approval: העלאה יוצרת עבודה `pending`.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>ברירת מחדל</h3>
+                            <ul>
+                                <li>לפריסה אמיתית ראשונה מומלץ להתחיל ב-manual approval.</li>
+                                <li>אחרי אמון ותפעול יציב אפשר לעבור לאוטומטי.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="phase-7">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 7</div><p>Local Testing</p></div>
+                        <div>
+                            <h3>בדיקות Web</h3>
+                            <ul>
+                                <li>PDF תקין, קובץ לא PDF, גדול מדי, חסר שם.</li>
+                                <li>סטטוס עם token נכון ושגוי.</li>
+                                <li>פעולות אדמין: approve, cancel, retry.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>בדיקות Agent</h3>
+                            <ul>
+                                <li>חסר SumatraPath נכשל ברור.</li>
+                                <li>Heartbeat, claim, download, dry-run, printed.</li>
+                                <li>כשל הדפסה מעדכן `failed`.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="phase-8">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 8</div><p>Deployment</p></div>
+                        <div>
+                            <h3>ענן</h3>
+                            <ul>
+                                <li>Supabase project, migration, bucket פרטי.</li>
+                                <li>Vercel ל-`apps/web`.</li>
+                                <li>env vars מלאים ובדיקת העלאה.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>מחשב הדפסה</h3>
+                            <ul>
+                                <li>Node.js LTS ו-SumatraPDF.</li>
+                                <li>מדפסת מותקנת ב-Windows.</li>
+                                <li>הרצה כ-Task Scheduler או NSSM.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="phase-9">
+                    <div class="phase-grid">
+                        <div><div class="phase-title">Phase 9</div><p>Future Features</p></div>
+                        <div>
+                            <h3>לא לבנות עכשיו</h3>
+                            <ul>
+                                <li>תשלום, מכסות, QR, release code.</li>
+                                <li>כמה מדפסות, בחירת מדפסת, חיוב לפי עמוד.</li>
+                                <li>המרת Word/PPT/תמונות ל-PDF.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>הרחבות</h3>
+                            <ul>
+                                <li>התראות כשל, סריקת וירוסים, מחיקה אוטומטית.</li>
+                                <li>ממשק עברי מלא ומיתוג white-label.</li>
+                                <li>זיהוי יכולות מדפסת אמיתי לצבע/דו-צדדי.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">סכמה</p>
+                    <h2>טבלאות מרכזיות</h2>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>print_jobs</h3>
+                    <table class="schema-table">
+                        <thead><tr><th>שדה</th><th>תפקיד</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>status</code></td><td>מצב העבודה לכל אורך החיים שלה.</td></tr>
+                            <tr><td><code>status_token</code></td><td>גישה ציבורית בטוחה לעמוד סטטוס.</td></tr>
+                            <tr><td><code>file_path</code></td><td>נתיב הקובץ בבאקט הפרטי.</td></tr>
+                            <tr><td><code>claimed_by_agent_id</code></td><td>מונע הדפסה כפולה בכמה סוכנים.</td></tr>
+                            <tr><td><code>error_message</code></td><td>הסבר קריא לכשל.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3>print_agents / app_settings</h3>
+                    <table class="schema-table">
+                        <thead><tr><th>שדה</th><th>תפקיד</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>last_seen_at</code></td><td>ניטור שהמחשב המקומי חי.</td></tr>
+                            <tr><td><code>current_job_id</code></td><td>עבודה נוכחית של הסוכן.</td></tr>
+                            <tr><td><code>printing_enabled</code></td><td>כיבוי מערכת הדפסה בלי לכבות אתר.</td></tr>
+                            <tr><td><code>manual_approval_required</code></td><td>בחירה בין תור ידני לאוטומטי.</td></tr>
+                            <tr><td><code>max_file_size_mb</code></td><td>מניעת שימוש לרעה.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">אופציות עיצוב</p>
+                    <h2>4 כיווני UI להשוואה</h2>
+                </div>
+                <p>כל כיוון מתאים לאופי שימוש אחר: משתמש מזדמן, מנהל מרחב, שקיפות תפעולית או סביבת עבודה מהירה.</p>
+            </div>
+            <div class="design-grid">
+                <article class="design-card">
+                    <div class="design-head">
+                        <div>
+                            <h3>פשוט</h3>
+                            <p>חוויה של העלאה מהירה למשתמשי קצה</p>
+                        </div>
+                    </div>
+                    <div class="mock mock-kiosk">
+                        <div class="mock-block"><span class="mock-line brand"></span><span class="mock-line short"></span></div>
+                        <div class="mock-upload"><span></span></div>
+                        <div class="mock-actions"><span></span><span></span><span></span></div>
+                    </div>
+                    <div class="pros-cons">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>מתאים למשתמשים לא טכניים.</li>
+                                <li>מקטין טעויות בהעלאה.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>פחות מידע על התור.</li>
+                                <li>דורש מסך אדמין נפרד וחזק.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="design-card">
+                    <div class="design-head">
+                        <div>
+                            <h3>תפעולי</h3>
+                            <p>דשבורד צפוף וברור למנהל המרחב</p>
+                        </div>
+                    </div>
+                    <div class="mock mock-admin">
+                        <div class="mock-sidebar"><span></span><span></span><span></span><span></span></div>
+                        <div class="mock-work">
+                            <div class="mock-block"><span class="mock-line brand"></span></div>
+                            <div class="mock-stats"><span></span><span></span><span></span><span></span></div>
+                            <div class="mock-block"><span class="mock-line"></span><span class="mock-line"></span><span class="mock-line short"></span><span class="mock-line"></span></div>
+                        </div>
+                    </div>
+                    <div class="pros-cons">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>מעולה לניהול תורים וכשלים.</li>
+                                <li>הרבה מידע במסך אחד.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>פחות נעים למשתמש מזדמן.</li>
+                                <li>דורש סדר ויזואלי מאוד מוקפד.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="design-card">
+                    <div class="design-head">
+                        <div>
+                            <h3>שקוף</h3>
+                            <p>כל שלב מוצג למשתמש ולאדמין</p>
+                        </div>
+                    </div>
+                    <div class="mock mock-trust">
+                        <div class="mock-block"><span class="mock-line brand"></span><span class="mock-line short"></span></div>
+                        <div class="timeline">
+                            <div class="time-row"><span class="dot"></span><div class="mock-block"><span class="mock-line"></span><span class="mock-line short"></span></div></div>
+                            <div class="time-row"><span class="dot"></span><div class="mock-block"><span class="mock-line"></span><span class="mock-line short"></span></div></div>
+                            <div class="time-row"><span class="dot"></span><div class="mock-block"><span class="mock-line"></span><span class="mock-line short"></span></div></div>
+                        </div>
+                    </div>
+                    <div class="pros-cons">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>בונה אמון סביב מסמכים רגישים.</li>
+                                <li>קל לתמיכה ואבחון תקלות.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>יותר טקסט ומידע במסכים.</li>
+                                <li>דורש לוגים מדויקים מה-Agent.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="design-card">
+                    <div class="design-head">
+                        <div>
+                            <h3>מהיר</h3>
+                            <p>פעולות מיידיות וסטטוסים גדולים</p>
+                        </div>
+                    </div>
+                    <div class="mock mock-pro">
+                        <div class="mock-block"><span class="mock-line brand"></span></div>
+                        <div class="split">
+                            <div class="mock-block"><span class="mock-line"></span><span class="mock-line"></span><span class="mock-line short"></span><span class="mock-line"></span></div>
+                            <div class="mock-block"><span class="mock-line brand"></span><span class="mock-line"></span><span class="mock-line short"></span></div>
+                        </div>
+                    </div>
+                    <div class="pros-cons">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>טוב לסביבה עם הרבה תנועה.</li>
+                                <li>מאפשר פעולות אדמין מהירות.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>צריך הגנות מפני לחיצות שגויות.</li>
+                                <li>פחות רגוע למסמכים רגישים.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="callout">
+                המלצה למימוש הקרוב: להתחיל בכיוון "פשוט" עבור המשתמשים ובכיוון "תפעולי" עבור האדמין.
+                כך מקבלים חוויית העלאה נקייה מצד אחד וניהול תור חזק מצד שני.
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.querySelectorAll("[data-tabs]").forEach((tabsRoot) => {
+            const buttons = Array.from(tabsRoot.querySelectorAll(".tab-button"));
+            const panels = Array.from(tabsRoot.querySelectorAll(".tab-panel"));
+
+            buttons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const targetId = button.getAttribute("data-tab");
+
+                    buttons.forEach((item) => item.classList.toggle("active", item === button));
+                    panels.forEach((panel) => panel.classList.toggle("active", panel.id === targetId));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

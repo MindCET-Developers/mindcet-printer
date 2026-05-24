@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPrint • אוטומציית הדפסת מיילים</title>
+    <!-- Google Fonts: Outfit & Assistant -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-logo">
+                <div class="logo-icon-container">
+                    <i data-lucide="printer" class="logo-icon"></i>
+                    <div class="logo-glow"></div>
+                </div>
+                <div class="logo-text">
+                    <h1>AutoPrint</h1>
+                    <p>אוטומציית הדפסה מהירה ישירות מתיבת המייל</p>
+                </div>
+            </div>
+            <div class="header-status">
+                <div class="status-indicator stopped" id="global-status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text" id="global-status-text">השירות כבוי</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="dashboard-grid">
+            
+            <!-- LEFT PANEL: SETTINGS -->
+            <section class="glass-card settings-panel">
+                <div class="card-header">
+                    <i data-lucide="settings" class="card-icon"></i>
+                    <h2>הגדרות האוטומציה</h2>
+                </div>
+
+                <form id="settings-form" class="settings-form">
+                    
+                    <!-- EMAIL CONFIGURATION -->
+                    <div class="settings-section">
+                        <h3><i data-lucide="mail"></i> הגדרות תיבת דואר</h3>
+                        
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="email-provider">ספק מייל</label>
+                                <select id="email-provider" class="form-select">
+                                    <option value="gmail">Gmail</option>
+                                    <option value="outlook">Outlook / Hotmail</option>
+                                    <option value="custom">שרת IMAP מותאם אישית</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="imap-server-group" style="display: none;">
+                            <label for="imap-host">שרת IMAP / פורט</label>
+                            <div class="input-pair">
+                                <input type="text" id="imap-host" placeholder="imap.example.com" class="form-input">
+                                <input type="number" id="imap-port" placeholder="993" class="form-input port-input" value="993">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email-address">כתובת אימייל</label>
+                            <div class="input-with-icon">
+                                <i data-lucide="at-sign"></i>
+                                <input type="email" id="email-address" placeholder="name@example.com" class="form-input" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-help">
+                                <label for="app-password">סיסמת אפליקציה</label>
+                                <button type="button" class="help-btn" id="password-help-trigger">
+                                    <i data-lucide="help-circle"></i>
+                                    <span>איך יוצרים?</span>
+                                </button>
+                            </div>
+                            <div class="input-with-icon">
+                                <i data-lucide="lock"></i>
+                                <input type="password" id="app-password" placeholder="••••••••••••••••" class="form-input" required>
+                                <button type="button" class="toggle-password" id="toggle-password-btn">
+                                    <i data-lucide="eye" id="password-eye-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="imap-folder">תיקייה לסריקה</label>
+                                <input type="text" id="imap-folder" placeholder="INBOX" class="form-input" value="INBOX">
+                            </div>
+                            <div class="form-group">
+                                <label for="filter-tag">מילת סינון (בנושא)</label>
+                                <input type="text" id="filter-tag" placeholder="לדוגמה: [PRINT]" class="form-input" value="[PRINT]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PRINTER CONFIGURATION -->
+                    <div class="settings-section">
+                        <h3><i data-lucide="printer"></i> הגדרות מדפסת</h3>
+                        <div class="form-group">
+                            <label for="printer-select">בחר מדפסת להדפסה</label>
+                            <div class="select-with-loader">
+                                <select id="printer-select" class="form-select">
+                                    <option value="default">מדפסת ברירת המחדל של מערכת ההפעלה</option>
+                                </select>
+                                <button type="button" class="refresh-btn" id="refresh-printers-btn" title="רענן מדפסות">
+                                    <i data-lucide="refresh-cw" id="printer-refresh-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AUTOMATION CONFIGURATION -->
+                    <div class="settings-section">
+                        <h3><i data-lucide="sliders"></i> הגדרות פעולה</h3>
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="check-interval">תדירות בדיקה</label>
+                                <select id="check-interval" class="form-select">
+                                    <option value="30000">כל 30 שניות</option>
+                                    <option value="60000" selected>כל דקה</option>
+                                    <option value="300000">כל 5 דקות</option>
+                                    <option value="600000">כל 10 דקות</option>
+                                </select>
+                            </div>
+                            <div class="form-group check-switch-group">
+                                <span class="switch-label">מחק מייל לאחר הדפסה</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="delete-after-print" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM ACTIONS -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="save-settings-btn">
+                            <i data-lucide="save"></i>
+                            שמור הגדרות
+                        </button>
+                        <div class="action-row-secondary">
+                            <button type="button" class="btn btn-secondary" id="test-connection-btn">
+                                <i data-lucide="wifi"></i>
+                                בדיקת חיבור למייל
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="test-print-btn">
+                                <i data-lucide="file-text"></i>
+                                הדפסת דף בדיקה
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- RIGHT PANEL: CONTROL & LOGS -->
+            <section class="right-panel-wrapper">
+                
+                <!-- SERVICE CONTROL CARD -->
+                <div class="glass-card control-card">
+                    <div class="control-header">
+                        <h2>שליטה בשירות</h2>
+                        <div class="pulse-indicator" id="service-pulse"></div>
+                    </div>
+                    <div class="control-actions">
+                        <button class="control-btn play" id="start-service-btn">
+                            <div class="btn-icon-wrapper"><i data-lucide="play"></i></div>
+                            <span>הפעל שירות אוטומטי</span>
+                        </button>
+                        <button class="control-btn stop disabled" id="stop-service-btn" disabled>
+                            <div class="btn-icon-wrapper"><i data-lucide="square"></i></div>
+                            <span>עצור שירות</span>
+                        </button>
+                        <button class="control-btn sync" id="sync-now-btn">
+                            <div class="btn-icon-wrapper"><i data-lucide="arrow-down-to-line"></i></div>
+                            <span>בדוק מיילים עכשיו</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STATS GRID -->
+                <div class="stats-grid">
+                    <div class="glass-card stat-item">
+                        <div class="stat-icon printed"><i data-lucide="check-circle-2"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-printed">0</span>
+                            <span class="stat-label">הודפסו בהצלחה</span>
+                        </div>
+                    </div>
+                    <div class="glass-card stat-item">
+                        <div class="stat-icon skipped"><i data-lucide="eye-off"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-skipped">0</span>
+                            <span class="stat-label">סוננו / דולגו</span>
+                        </div>
+                    </div>
+                    <div class="glass-card stat-item">
+                        <div class="stat-icon failed"><i data-lucide="alert-triangle"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-failed">0</span>
+                            <span class="stat-label">שגיאות הדפסה</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRINT LOGS CARD -->
+                <div class="glass-card logs-card">
+                    <div class="card-header log-header">
+                        <div class="header-title">
+                            <i data-lucide="list-todo" class="card-icon"></i>
+                            <h2>היסטוריית הדפסות ופעילות</h2>
+                        </div>
+                        <button class="btn-clear-logs" id="clear-logs-btn" title="נקה היסטוריה">
+                            <i data-lucide="trash-2"></i>
+                            נקה היסטוריה
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="logs-table" id="logs-table">
+                            <thead>
+                                <tr>
+                                    <th>תאריך ושעה</th>
+                                    <th>שולח</th>
+                                    <th>נושא המייל</th>
+                                    <th>קבצים להדפסה</th>
+                                    <th>סטטוס</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-tbody">
+                                <tr class="empty-row" id="empty-logs-row">
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <i data-lucide="inbox"></i>
+                                            <p>אין עדיין פריטים בהיסטוריה. ברגע שהשירות יופעל ומייל מתאים יתקבל, הוא יופיע כאן!</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- GMAIL APP PASSWORD HELP MODAL -->
+    <div class="modal-backdrop" id="help-modal">
+        <div class="glass-card modal-content">
+            <button class="modal-close" id="modal-close-btn">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-body">
+                <h2>איך יוצרים סיסמת אפליקציה?</h2>
+                <p class="modal-subtitle">ספקי מייל מודרניים דורשים סיסמה ייעודית בת 16 תווים לחיבור מאובטח.</p>
+                
+                <div class="tabs-container">
+                    <div class="tabs-header">
+                        <button class="tab-btn active" data-tab="gmail-help">Gmail</button>
+                        <button class="tab-btn" data-tab="outlook-help">Outlook</button>
+                    </div>
+                    
+                    <div class="tab-content active" id="gmail-help">
+                        <ol class="help-steps">
+                            <li>כנס לחשבון הגוגל שלך (Google Account) ועבור לכרטיסיית <strong>אבטחה (Security)</strong>.</li>
+                            <li>תחת "כיצד אתה נכנס ל-Google", ודא ש<strong>אימות דו-שלבי (2-Step Verification)</strong> מופעל.</li>
+                            <li>לחץ על <strong>אימות דו-שלבי</strong>, גלול עד למטה ולחץ על <strong>סיסמאות לאפליקציות (App passwords)</strong>.</li>
+                            <li>בחר שם לאפליקציה (למשל <code>Email Printer</code>) ולחץ על <strong>יצירה (Create)</strong>.</li>
+                            <li>יוצג לך קוד צהוב בן 16 תווים. <strong>העתק אותו והדבק אותו בתיבת הסיסמה בתוכנה</strong> (ללא רווחים).</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="tab-content" id="outlook-help">
+                        <ol class="help-steps">
+                            <li>היכנס לאתר <strong>Microsoft Account</strong> ועבור לקטגוריית <strong>Security (אבטחה)</strong>.</li>
+                            <li>לחץ על <strong>Advanced security options (אפשרויות אבטחה מתקדמות)</strong>.</li>
+                            <li>ודא ש<strong>אימות דו-שלבי</strong> מופעל בחשבונך.</li>
+                            <li>גלול מטה לפרק <strong>App passwords (סיסמאות לאפליקציות)</strong> ולחץ על <strong>Create a new app password</strong>.</li>
+                            <li>העתק את הסיסמה המוצגת (בת 16 תווים) והדבק אותה בשדה הסיסמה בתוכנה.</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="modal-ok-btn">הבנתי, תודה!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

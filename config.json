@@ -1,0 +1,12 @@
+{
+  "provider": "gmail",
+  "host": "imap.gmail.com",
+  "port": 993,
+  "user": "",
+  "pass": "",
+  "folder": "INBOX",
+  "filterTag": "[PRINT]",
+  "printer": "default",
+  "interval": 60000,
+  "deleteAfterPrint": true
+}

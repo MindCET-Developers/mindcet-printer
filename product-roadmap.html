@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPrint - תמונת מוצר, התקדמות וסקיצות עיצוב</title>
+    <style>
+        :root {
+            --ink: #17212b;
+            --muted: #64748b;
+            --line: #d9e2ec;
+            --paper: #fbfcfe;
+            --panel: #ffffff;
+            --blue: #2364aa;
+            --teal: #12857f;
+            --green: #2d8a4e;
+            --amber: #b7791f;
+            --red: #bf3b3b;
+            --violet: #7252a3;
+            --shadow: 0 18px 50px rgba(23, 33, 43, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.6;
+        }
+
+        .page {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 24px 56px;
+        }
+
+        .hero {
+            min-height: 420px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+            gap: 36px;
+            align-items: center;
+            padding: 34px 0 28px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .eyebrow {
+            color: var(--teal);
+            font-weight: 700;
+            letter-spacing: 0;
+            margin: 0 0 10px;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            font-size: clamp(42px, 7vw, 82px);
+            line-height: 0.98;
+            margin-bottom: 22px;
+            letter-spacing: 0;
+        }
+
+        h2 {
+            font-size: 30px;
+            margin-bottom: 18px;
+            letter-spacing: 0;
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 0;
+        }
+
+        .lead {
+            font-size: 21px;
+            color: #344456;
+            max-width: 680px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .pill {
+            border: 1px solid var(--line);
+            background: #fff;
+            color: #334155;
+            padding: 9px 14px;
+            border-radius: 999px;
+            font-weight: 650;
+        }
+
+        .product-visual {
+            background: #122033;
+            color: #e9f3ff;
+            min-height: 340px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .visual-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            background: #182a43;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .visual-brand {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-weight: 800;
+        }
+
+        .mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: #2bb3a3;
+            display: grid;
+            place-items: center;
+            color: #08201d;
+            font-weight: 900;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #b9f3dd;
+            font-weight: 700;
+        }
+
+        .status::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #42d392;
+        }
+
+        .visual-body {
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .visual-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .field {
+            height: 38px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            margin: 10px 0;
+        }
+
+        .mini-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .mini-row span {
+            flex: 1;
+            height: 48px;
+            border-radius: 6px;
+            background: rgba(43, 179, 163, 0.22);
+            border: 1px solid rgba(43, 179, 163, 0.28);
+        }
+
+        .job {
+            display: grid;
+            grid-template-columns: 34px 1fr 70px;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .job:last-child {
+            border-bottom: 0;
+        }
+
+        .job-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            background: #f4c95d;
+        }
+
+        .job-title {
+            height: 10px;
+            width: 85%;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.74);
+            margin-bottom: 8px;
+        }
+
+        .job-sub {
+            height: 8px;
+            width: 54%;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .job-badge {
+            text-align: center;
+            border-radius: 999px;
+            background: rgba(66, 211, 146, 0.18);
+            color: #b9f3dd;
+            font-size: 12px;
+            padding: 4px 0;
+        }
+
+        section {
+            padding: 44px 0 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .card,
+        .milestone,
+        .sketch-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: 0 8px 26px rgba(23, 33, 43, 0.05);
+        }
+
+        .card {
+            padding: 22px;
+        }
+
+        .card ul,
+        .sketch-card ul {
+            padding-right: 20px;
+            margin-bottom: 0;
+        }
+
+        .card li,
+        .sketch-card li {
+            margin-bottom: 8px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .tag.done {
+            background: #e7f6ee;
+            color: var(--green);
+        }
+
+        .tag.todo {
+            background: #fff3df;
+            color: var(--amber);
+        }
+
+        .tag.risk {
+            background: #fbe8e8;
+            color: var(--red);
+        }
+
+        .flow {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .flow-step {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 132px;
+            position: relative;
+        }
+
+        .flow-step strong {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 7px;
+        }
+
+        .flow-step span {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .milestones {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .milestone {
+            padding: 18px;
+            border-top: 5px solid var(--blue);
+        }
+
+        .milestone:nth-child(2) {
+            border-top-color: var(--teal);
+        }
+
+        .milestone:nth-child(3) {
+            border-top-color: var(--violet);
+        }
+
+        .milestone:nth-child(4) {
+            border-top-color: var(--amber);
+        }
+
+        .milestone:nth-child(5) {
+            border-top-color: var(--green);
+        }
+
+        .time {
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .sketch-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .sketch-card {
+            overflow: hidden;
+        }
+
+        .sketch-head {
+            padding: 18px 20px 12px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .sketch-head h3 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .sketch-head p {
+            color: var(--muted);
+            margin: 0;
+            font-weight: 650;
+        }
+
+        .mock {
+            height: 360px;
+            padding: 18px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .mock-operational {
+            grid-template-columns: 150px 1fr;
+            background: #f7fafc;
+        }
+
+        .side {
+            background: #1d2b3a;
+            border-radius: 8px;
+            padding: 12px;
+            display: grid;
+            gap: 10px;
+            align-content: start;
+        }
+
+        .side span,
+        .bar,
+        .line,
+        .tiny {
+            border-radius: 999px;
+            display: block;
+        }
+
+        .side span {
+            height: 28px;
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .work {
+            display: grid;
+            grid-template-rows: 58px 74px 1fr;
+            gap: 12px;
+        }
+
+        .toolbar,
+        .stat-strip,
+        .table {
+            background: #fff;
+            border: 1px solid #dce6ef;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .bar {
+            height: 18px;
+            background: #dbeafe;
+            width: 42%;
+        }
+
+        .stat-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .stat-strip span {
+            border-radius: 6px;
+            background: #ecfdf5;
+        }
+
+        .line {
+            height: 13px;
+            background: #d9e2ec;
+            margin: 11px 0;
+        }
+
+        .line.short {
+            width: 54%;
+        }
+
+        .mock-calm {
+            background: #f4fbfa;
+            grid-template-rows: 82px 1fr;
+        }
+
+        .calm-top {
+            background: #ffffff;
+            border: 1px solid #cde8e4;
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: 1fr 120px;
+            gap: 14px;
+            padding: 16px;
+        }
+
+        .calm-status {
+            border-radius: 8px;
+            background: #dff6ec;
+        }
+
+        .calm-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .calm-panel {
+            background: #fff;
+            border: 1px solid #cde8e4;
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .calm-panel .line {
+            background: #d7eee9;
+        }
+
+        .mock-fast {
+            background: #fffaf0;
+            grid-template-rows: 68px 1fr 54px;
+        }
+
+        .command {
+            background: #1f2937;
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .command .tiny {
+            width: 34px;
+            height: 34px;
+            background: #f59e0b;
+        }
+
+        .command .bar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.45);
+        }
+
+        .fast-body {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 12px;
+        }
+
+        .fast-list,
+        .fast-actions,
+        .bottom-actions {
+            background: #fff;
+            border: 1px solid #f1d4a5;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .bottom-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .bottom-actions span {
+            border-radius: 6px;
+            background: #ffedd5;
+        }
+
+        .mock-transparent {
+            background: #f8fafc;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .trace {
+            background: #fff;
+            border: 1px solid #d9e2ec;
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .trace-node {
+            display: grid;
+            grid-template-columns: 24px 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #7252a3;
+        }
+
+        .trace-node .line {
+            margin: 5px 0;
+            background: #e8def7;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            padding: 18px 20px 22px;
+        }
+
+        .pros-cons h4 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+
+        .pros-cons ul {
+            margin-top: 0;
+        }
+
+        .note {
+            background: #eef6ff;
+            border: 1px solid #cde1f9;
+            padding: 18px 20px;
+            border-radius: 8px;
+            color: #21476f;
+            font-weight: 650;
+        }
+
+        @media (max-width: 980px) {
+            .hero,
+            .grid-3,
+            .flow,
+            .milestones,
+            .sketch-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                min-height: 0;
+            }
+
+            .mock-transparent,
+            .mock-operational,
+            .calm-body,
+            .fast-body {
+                grid-template-columns: 1fr;
+            }
+
+            .mock {
+                height: auto;
+                min-height: 360px;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .page {
+                max-width: none;
+                padding: 16px;
+            }
+
+            .card,
+            .milestone,
+            .sketch-card,
+            .product-visual {
+                box-shadow: none;
+            }
+
+            section {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">תמונת מוצר להמשך פיתוח</p>
+                <h1>AutoPrint</h1>
+                <p class="lead">
+                    שירות מקומי שמתחבר לתיבת דואר, מזהה מיילים להדפסה לפי מילת סינון בנושא, שולף קבצים מצורפים ומדפיס אותם אוטומטית למדפסת שנבחרה.
+                    המטרה היא להפוך פעולת הדפסה חוזרת, ידנית ופגיעה לזרימת עבודה שקטה, מבוקרת וברורה.
+                </p>
+                <div class="hero-actions">
+                    <span class="pill">Node.js + Express</span>
+                    <span class="pill">IMAP</span>
+                    <span class="pill">PDF / PNG / JPG</span>
+                    <span class="pill">לוח בקרה מקומי</span>
+                </div>
+            </div>
+
+            <div class="product-visual" aria-label="המחשה של לוח הבקרה של AutoPrint">
+                <div class="visual-top">
+                    <div class="visual-brand"><span class="mark">A</span><span>AutoPrint</span></div>
+                    <div class="status">שירות פעיל</div>
+                </div>
+                <div class="visual-body">
+                    <div class="visual-card">
+                        <strong>הגדרות</strong>
+                        <span class="field"></span>
+                        <span class="field"></span>
+                        <span class="field"></span>
+                        <div class="mini-row"><span></span><span></span></div>
+                    </div>
+                    <div class="visual-card">
+                        <strong>תור הדפסות</strong>
+                        <div class="job">
+                            <span class="job-icon"></span>
+                            <span><span class="job-title"></span><span class="job-sub"></span></span>
+                            <span class="job-badge">הודפס</span>
+                        </div>
+                        <div class="job">
+                            <span class="job-icon"></span>
+                            <span><span class="job-title"></span><span class="job-sub"></span></span>
+                            <span class="job-badge">הודפס</span>
+                        </div>
+                        <div class="job">
+                            <span class="job-icon"></span>
+                            <span><span class="job-title"></span><span class="job-sub"></span></span>
+                            <span class="job-badge">דולג</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>מה המוצר עושה</h2>
+            <div class="flow">
+                <div class="flow-step"><strong>מתחבר</strong><span>המשתמש מגדיר ספק מייל, שרת IMAP, תיקייה, כתובת וסיסמת אפליקציה.</span></div>
+                <div class="flow-step"><strong>סורק</strong><span>השירות בודק מיילים שלא נקראו בתדירות קבועה או בלחיצה ידנית.</span></div>
+                <div class="flow-step"><strong>מסנן</strong><span>רק מיילים שהנושא שלהם כולל תג כמו [PRINT] ממשיכים לטיפול.</span></div>
+                <div class="flow-step"><strong>מדפיס</strong><span>קבצי PDF מודפסים ישירות, ותמונות PNG/JPG מומרות ל-PDF לפני ההדפסה.</span></div>
+                <div class="flow-step"><strong>מתעד</strong><span>כל ניסיון נשמר בהיסטוריה עם שולח, נושא, קבצים, שעה וסטטוס.</span></div>
+            </div>
+        </section>
+
+        <section>
+            <h2>סטטוס פיתוח</h2>
+            <div class="grid-3">
+                <article class="card">
+                    <span class="tag done">בוצע</span>
+                    <h3>תשתית עובדת</h3>
+                    <ul>
+                        <li>שרת Express מקומי על פורט 5001 והגשה של הממשק הקיים.</li>
+                        <li>שמירת הגדרות ב-config.json והיסטוריית הדפסות ב-jobs.json.</li>
+                        <li>ניקוי תיקיית קבצים זמניים בעליית השירות.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <span class="tag done">בוצע</span>
+                    <h3>אוטומציית הדפסה</h3>
+                    <ul>
+                        <li>חיבור ל-Gmail, Outlook או שרת IMAP מותאם.</li>
+                        <li>סריקת מיילים שלא נקראו, סינון לפי תג בנושא והדפסת קבצים מצורפים.</li>
+                        <li>בחירת מדפסת מערכת, בדיקת חיבור למייל והדפסת דף בדיקה.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <span class="tag done">בוצע</span>
+                    <h3>ממשק ניהול</h3>
+                    <ul>
+                        <li>לוח בקרה להגדרות מייל, מדפסת ותדירות בדיקה.</li>
+                        <li>הפעלה, עצירה וסנכרון מיידי.</li>
+                        <li>סטטיסטיקות, היסטוריית פעילות ומצב דמו כשהשרת לא זמין.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <span class="tag todo">נשאר</span>
+                    <h3>הקשחת מוצר</h3>
+                    <ul>
+                        <li>הצפנת סיסמאות או מעבר ל-OAuth במקום שמירת סיסמת אפליקציה גלויה.</li>
+                        <li>תור הדפסה עם ניסיונות חוזרים, סיבות כשל מפורטות וביטול עבודה.</li>
+                        <li>בדיקות אוטומטיות ל-API, לסריקת מיילים ולתרחישי שגיאה.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <span class="tag todo">נשאר</span>
+                    <h3>הפצה ותפעול</h3>
+                    <ul>
+                        <li>אריזה כיישום Windows או שירות שרץ ברקע אחרי אתחול.</li>
+                        <li>מסך התקנה ראשון, בדיקת הרשאות ומדריך קצר למנהל מערכת.</li>
+                        <li>ייצוא לוגים, ניטור תקינות והתראה כשהחיבור או המדפסת נופלים.</li>
+                    </ul>
+                </article>
+                <article class="card">
+                    <span class="tag risk">סיכון</span>
+                    <h3>נקודות לשים לב</h3>
+                    <ul>
+                        <li>הקבצים הקיימים כוללים סימני קידוד עברית משובשים בחלק מהטקסטים.</li>
+                        <li>מחיקה אחרי הדפסה היא פעולה רגישה וצריכה אישור ברור או מצב ארכיון.</li>
+                        <li>ספקי מייל עשויים לחסום התחברות בסיסמאות ללא הגדרת אבטחה מתאימה.</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <h2>אבני דרך להמשך</h2>
+            <div class="milestones">
+                <article class="milestone">
+                    <div class="time">שבוע 1</div>
+                    <h3>ייצוב</h3>
+                    <p>לתקן קידוד עברית, להגדיר תרחישי בדיקה, להוסיף הודעות שגיאה ברורות ולוודא שהזרימה עובדת מול מדפסת אמיתית.</p>
+                </article>
+                <article class="milestone">
+                    <div class="time">שבוע 2</div>
+                    <h3>אבטחה</h3>
+                    <p>להחליט על מנגנון סודות, הרשאות, מחיקה מול ארכוב, ומדיניות לוגים שאינה חושפת מידע רגיש.</p>
+                </article>
+                <article class="milestone">
+                    <div class="time">שבועות 3-4</div>
+                    <h3>עיצוב</h3>
+                    <p>לבחור כיוון עיצוב אחד, להפוך אותו למסכים אמיתיים, לבדוק שימושיות ולהקטין עומס בממשק ההגדרות.</p>
+                </article>
+                <article class="milestone">
+                    <div class="time">שבוע 5</div>
+                    <h3>פיילוט</h3>
+                    <p>להריץ בסביבה אחת עם משתמשים אמיתיים, למדוד כשלי הדפסה, זמני טיפול, ושאלות חוזרות של משתמשים.</p>
+                </article>
+                <article class="milestone">
+                    <div class="time">שבוע 6</div>
+                    <h3>השקה</h3>
+                    <p>לארוז התקנה, להכין תיעוד קצר, להגדיר תמיכה וניטור, ולנעול גרסת MVP להפצה ראשונה.</p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <h2>ארבע סקיצות לעיצוב חדש</h2>
+            <p class="note">כל סקיצה מציעה אופי אחר למוצר. הכותרת היא מילה אחת שמאפיינת את הכיוון, כדי שיהיה קל להשוות ביניהן בדיון.</p>
+            <div class="sketch-grid">
+                <article class="sketch-card">
+                    <div class="sketch-head">
+                        <div>
+                            <h3>תפעולי</h3>
+                            <p>מסך צפוף, יעיל וממוקד עבודה</p>
+                        </div>
+                    </div>
+                    <div class="mock mock-operational">
+                        <div class="side"><span></span><span></span><span></span><span></span></div>
+                        <div class="work">
+                            <div class="toolbar"><span class="bar"></span></div>
+                            <div class="stat-strip"><span></span><span></span><span></span></div>
+                            <div class="table">
+                                <span class="line"></span><span class="line"></span><span class="line short"></span><span class="line"></span><span class="line short"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pros-cons">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>מתאים למפעיל שחוזר למסך כמה פעמים ביום.</li>
+                                <li>מציג הרבה מידע בלי ניווט מיותר.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>פחות מזמין למשתמש חדש.</li>
+                                <li>דורש דיוק היררכי כדי לא להרגיש עמוס.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="sketch-card">
+                    <div class="sketch-head">
+                        <div>
+                            <h3>רגוע</h3>
+                            <p>חוויה פשוטה עם דגש על ביטחון</p>
+                        </div>
+                    </div>
+                    <div class="mock mock-calm">
+                        <div class="calm-top"><span class="bar"></span><span class="calm-status"></span></div>
+                        <div class="calm-body">
+                            <div class="calm-panel"><span class="line"></span><span class="line short"></span><span class="line"></span><span class="line short"></span></div>
+                            <div class="calm-panel"><span class="line short"></span><span class="line"></span><span class="line"></span><span class="line short"></span></div>
+                        </div>
+                    </div>
+                    <div class="pros-cons">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>קל להסביר למשתמש לא טכני.</li>
+                                <li>מצמצם תחושת סכנה סביב הדפסה ומחיקת מיילים.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>פחות יעיל למעקב אחרי הרבה עבודות.</li>
+                                <li>עלול להסתיר מידע תפעולי חשוב.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="sketch-card">
+                    <div class="sketch-head">
+                        <div>
+                            <h3>מהיר</h3>
+                            <p>פעולות מרכזיות תמיד זמינות</p>
+                        </div>
+                    </div>
+                    <div class="mock mock-fast">
+                        <div class="command"><span class="tiny"></span><span class="bar"></span></div>
+                        <div class="fast-body">
+                            <div class="fast-list"><span class="line"></span><span class="line"></span><span class="line short"></span><span class="line"></span></div>
+                            <div class="fast-actions"><span class="line short"></span><span class="line"></span><span class="line short"></span></div>
+                        </div>
+                        <div class="bottom-actions"><span></span><span></span><span></span><span></span></div>
+                    </div>
+                    <div class="pros-cons">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>הפעלה, עצירה, סנכרון ובדיקה נגישים מאוד.</li>
+                                <li>טוב לסביבה שבה צריך להגיב מהר לתקלות.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>עשוי לגרום ללחיצות לא מכוונות אם אין אישורים.</li>
+                                <li>פחות מתאים למסך הגדרות מורכב.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="sketch-card">
+                    <div class="sketch-head">
+                        <div>
+                            <h3>שקוף</h3>
+                            <p>המשתמש רואה כל שלב בשרשרת</p>
+                        </div>
+                    </div>
+                    <div class="mock mock-transparent">
+                        <div class="trace">
+                            <div class="trace-node"><span class="dot"></span><span><span class="line"></span><span class="line short"></span></span></div>
+                            <div class="trace-node"><span class="dot"></span><span><span class="line"></span><span class="line short"></span></span></div>
+                            <div class="trace-node"><span class="dot"></span><span><span class="line"></span><span class="line short"></span></span></div>
+                            <div class="trace-node"><span class="dot"></span><span><span class="line"></span><span class="line short"></span></span></div>
+                        </div>
+                        <div class="trace">
+                            <span class="line"></span><span class="line short"></span><span class="line"></span><span class="line"></span><span class="line short"></span>
+                        </div>
+                    </div>
+                    <div class="pros-cons">
+                        <div>
+                            <h4>יתרונות</h4>
+                            <ul>
+                                <li>מעולה לאמון, תמיכה ואבחון תקלות.</li>
+                                <li>מבהיר למה מייל הודפס, דולג או נכשל.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>חסרונות</h4>
+                            <ul>
+                                <li>דורש לוגים עשירים ומבנה נתונים מפורט יותר.</li>
+                                <li>עלול להרגיש טכני מדי למשתמשי קצה.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

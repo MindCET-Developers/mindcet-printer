@@ -1,0 +1,30 @@
+{
+  "name": "printdesk-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PrintDesk Web-to-Print Portal MVP with legacy email-to-print side feature",
+  "workspaces": [
+    "apps/web",
+    "apps/agent"
+  ],
+  "scripts": {
+    "dev:web": "npm --workspace apps/web run dev",
+    "build:web": "npm --workspace apps/web run build",
+    "start:web": "npm --workspace apps/web run start",
+    "dev:agent": "npm --workspace apps/agent run dev",
+    "build:agent": "npm --workspace apps/agent run build",
+    "start:agent": "npm --workspace apps/agent run start",
+    "legacy:email-printer": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "imapflow": "^1.0.164",
+    "mailparser": "^3.7.1",
+    "pdf-lib": "^1.17.1",
+    "pdf-to-printer": "^2.0.4"
+  },
+  "author": "Antigravity",
+  "license": "ISC"
+}
