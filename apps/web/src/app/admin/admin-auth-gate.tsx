@@ -4,6 +4,7 @@ import { Session } from "@supabase/supabase-js";
 import Link from "next/link";
 import { FormEvent, ReactNode, useEffect, useState } from "react";
 import { createBrowserClient } from "@/lib/supabase-browser";
+import { debugLog } from "@/lib/debug-log";
 
 const localDevToken = "printdesk-local-dev-admin";
 const localDevEmail = "local-dev@printdesk.local";
@@ -15,25 +16,102 @@ type AdminAuthGateProps = {
 export function AdminAuthGate({ children }: AdminAuthGateProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLocalDevAdmin, setIsLocalDevAdmin] = useState(false);
+  const [adminCheck, setAdminCheck] = useState<"idle" | "checking" | "allowed" | "denied">("idle");
+  const [adminError, setAdminError] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const supabase = createBrowserClient();
   const canUseLocalDevLogin = process.env.NODE_ENV !== "production";
 
   useEffect(() => {
+    const authError = new URLSearchParams(window.location.search).get("auth_error");
+    if (authError) {
+      setMessage("ההתחברות מהמייל נכשלה. ודאו שכתובת האתר מוגדרת ב-Supabase תחת Redirect URLs.");
+    }
+
     if (canUseLocalDevLogin && window.sessionStorage.getItem("printdesk-local-dev-admin") === "true") {
       setIsLocalDevAdmin(true);
+      setAdminCheck("allowed");
     }
 
     if (!supabase) return;
+    const client = supabase;
 
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    async function hydrateSessionFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      if (!code) return;
+
+      debugLog("admin-auth-gate.tsx:hydrateSessionFromUrl", "found auth code on admin url", { hasCode: true }, "B,E");
+      const { error } = await client.auth.exchangeCodeForSession(code);
+      debugLog("admin-auth-gate.tsx:hydrateSessionFromUrl", "exchange on admin result", {
+        ok: !error,
+        errorMessage: error?.message || null
+      }, "B,D,E");
+
+      params.delete("code");
+      params.delete("type");
+      const nextQuery = params.toString();
+      const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}`;
+      window.history.replaceState({}, "", nextUrl);
+    }
+
+    hydrateSessionFromUrl()
+      .catch(() => undefined)
+      .finally(() => {
+        client.auth.getSession().then(({ data }) => setSession(data.session));
+      });
+    const { data } = client.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
+      if (!nextSession) {
+        setAdminCheck("idle");
+        setAdminError("");
+      }
     });
 
     return () => data.subscription.unsubscribe();
   }, [canUseLocalDevLogin, supabase]);
+
+  useEffect(() => {
+    const token = session?.access_token;
+    if (!token) return;
+
+    let cancelled = false;
+    setAdminCheck("checking");
+    setAdminError("");
+
+    fetch("/api/admin/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(async (response) => {
+        const payload = await response.json();
+        if (cancelled) return;
+
+        debugLog("admin-auth-gate.tsx:admin/me", "admin me response", {
+          ok: response.ok,
+          status: response.status,
+          error: payload.error || null
+        }, "C,D");
+
+        if (!response.ok) {
+          setAdminCheck("denied");
+          setAdminError(payload.error || "אין הרשאת מנהל.");
+          return;
+        }
+
+        setAdminCheck("allowed");
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setAdminCheck("denied");
+          setAdminError("לא ניתן לאמת הרשאות מנהל.");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.access_token]);
 
   async function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,14 +122,25 @@ export function AdminAuthGate({ children }: AdminAuthGateProps) {
       return;
     }
 
+    const redirectTo = `${window.location.origin}/auth/callback?next=/admin`;
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: email.trim(),
       options: {
-        emailRedirectTo: window.location.origin + "/admin"
+        emailRedirectTo: redirectTo
       }
     });
 
-    setMessage(error ? error.message : "שלחנו קישור התחברות למייל. אם הוא לא מגיע, השתמש בכניסה מקומית לפיתוח.");
+    debugLog("admin-auth-gate.tsx:signInWithOtp", "otp request result", {
+      ok: !error,
+      errorMessage: error?.message || null,
+      redirectHost: new URL(redirectTo).host
+    }, "B");
+
+    setMessage(
+      error
+        ? error.message
+        : "שלחנו קישור התחברות למייל. אחרי הלחיצה תועברו חזרה לאזור המנהל. אם הקישור לא עובד, ודאו שכתובת האתר מוגדרת ב-Supabase."
+    );
   }
 
   function signInLocalDev() {
@@ -76,6 +165,35 @@ export function AdminAuthGate({ children }: AdminAuthGateProps) {
   }
 
   if (session?.access_token && session.user.email) {
+    if (adminCheck === "checking" || adminCheck === "idle") {
+      return (
+        <main className="admin-login-shell">
+          <div className="admin-login-card">
+            <p className="eyebrow">PrintDesk Admin</p>
+            <h1>בודקים הרשאות...</h1>
+          </div>
+        </main>
+      );
+    }
+
+    if (adminCheck === "denied") {
+      return (
+        <main className="admin-login-shell">
+          <div className="admin-login-card">
+            <p className="eyebrow">PrintDesk Admin</p>
+            <h1>אין הרשאת מנהל</h1>
+            <p className="lead">
+              התחברתם כ-{session.user.email}, אבל המייל לא מוגדר ב-ADMIN_EMAILS בשרת (Netlify).
+            </p>
+            <div className="alert">{adminError}</div>
+            <button className="primary-action" type="button" onClick={signOut}>
+              יציאה וניסיון מחדש
+            </button>
+          </div>
+        </main>
+      );
+    }
+
     return (
       <AdminShell email={session.user.email} onSignOut={signOut}>
         {children(session.access_token, session.user.email)}

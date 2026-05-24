@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrintDesk — סטטוס הפרויקט</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0f1c;
+      --card: rgba(17,24,44,0.85);
+      --border: rgba(255,255,255,0.08);
+      --primary: #3b82f6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --purple: #8b5cf6;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --dim: #475569;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Assistant', sans-serif;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* BACKGROUND */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 10% 10%, rgba(59,130,246,0.12) 0, transparent 55%),
+        radial-gradient(ellipse at 90% 85%, rgba(16,185,129,0.08) 0, transparent 55%);
+      z-index: -1;
+    }
+
+    /* LAYOUT */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 3rem 1rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: #93c5fd;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 99px;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.75rem;
+    }
+    .hero p { color: var(--muted); font-size: 1.1rem; max-width: 640px; margin: 0 auto 1.5rem; }
+    .hero .meta { font-size: 0.85rem; color: var(--dim); }
+
+    /* SECTION HEADINGS */
+    .section { margin-bottom: 3rem; }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .section-title .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-blue   { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
+    .dot-green  { background: var(--success); box-shadow: 0 0 8px var(--success); }
+    .dot-orange { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+    .dot-red    { background: var(--danger);  box-shadow: 0 0 8px var(--danger); }
+    .dot-purple { background: var(--purple);  box-shadow: 0 0 8px var(--purple); }
+
+    /* GLASS CARDS */
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .card:hover { border-color: rgba(255,255,255,0.14); }
+
+    /* ARCHITECTURE FLOW */
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+    .arch-node {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1.4rem;
+      text-align: center;
+      min-width: 120px;
+    }
+    .arch-node .icon { font-size: 1.8rem; margin-bottom: 0.3rem; }
+    .arch-node .label { font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+    .arch-node .sublabel { font-size: 0.72rem; color: var(--dim); margin-top: 0.15rem; }
+    .arch-arrow {
+      font-size: 1.5rem; color: var(--primary); margin: 0 0.4rem;
+      font-weight: 700;
+    }
+    .arch-node.highlight { border-color: rgba(59,130,246,0.4); background: rgba(59,130,246,0.08); }
+    .arch-node.done-node { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.06); }
+    .arch-node.missing-node { border-color: rgba(239,68,68,0.35); background: rgba(239,68,68,0.06); }
+
+    /* TASK GRID */
+    .task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+
+    /* TASK CARDS */
+    .task {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .task::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 4px; height: 100%;
+      border-radius: 0 14px 14px 0;
+    }
+    .task.done::before   { background: var(--success); }
+    .task.partial::before { background: var(--warning); }
+    .task.missing::before { background: var(--danger); }
+    .task.stub::before   { background: var(--purple); }
+
+    .task-header { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .task-icon { font-size: 1.5rem; flex-shrink: 0; line-height: 1; }
+    .task-title { font-weight: 700; font-size: 1rem; line-height: 1.3; }
+    .task-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 0.18rem 0.55rem;
+      border-radius: 99px;
+      margin-top: 0.3rem;
+    }
+    .tag-done    { background: rgba(16,185,129,0.15);  color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+    .tag-partial { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+    .tag-missing { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+    .tag-stub    { background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.2); }
+
+    .task-body { font-size: 0.88rem; color: var(--muted); }
+    .task-body ul { padding-right: 1.1rem; margin-top: 0.5rem; }
+    .task-body li { margin-bottom: 0.3rem; }
+    .task-body code {
+      background: rgba(255,255,255,0.06);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      color: #93c5fd;
+      font-family: monospace;
+    }
+
+    /* CHECKLIST */
+    .checklist { list-style: none; padding: 0; }
+    .checklist li {
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .check-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
+    .check-text strong { display: block; font-weight: 700; margin-bottom: 0.15rem; }
+    .check-text span { color: var(--muted); font-size: 0.84rem; }
+
+    /* PRIORITY TABLE */
+    .priority-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .priority-table th {
+      background: rgba(255,255,255,0.04);
+      padding: 0.75rem 1rem;
+      text-align: right;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .priority-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: top;
+    }
+    .priority-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .pill {
+      display: inline-block;
+      font-size: 0.72rem; font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+    }
+    .pill-critical { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    .pill-high     { background: rgba(245,158,11,0.2); color: #fcd34d; }
+    .pill-medium   { background: rgba(59,130,246,0.2); color: #93c5fd; }
+    .pill-low      { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* TIMELINE */
+    .timeline { position: relative; padding-right: 2rem; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 7px;
+      width: 2px; height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--success));
+      opacity: 0.3;
+    }
+    .tl-item { position: relative; margin-bottom: 1.5rem; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      right: -1.6rem;
+      top: 0.4rem;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 8px var(--primary);
+    }
+    .tl-item.done-phase::before { background: var(--success); box-shadow: 0 0 8px var(--success); }
+    .tl-item.missing-phase::before { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+    .tl-label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 0.2rem;
+    }
+    .tl-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .tl-desc { font-size: 0.85rem; color: var(--muted); }
+
+    /* RESPONSIVE */
+    @media (max-width: 640px) {
+      .arch-flow { flex-direction: column; align-items: flex-start; }
+      .arch-arrow { transform: rotate(90deg); margin: 0.25rem auto; }
+      .task-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="badge">סטטוס פרויקט — מאי 2026</div>
+    <h1>PrintDesk · MindCET</h1>
+    <p>מערכת הדפסה דיגיטלית — העלאת PDF מהאינטרנט ישירות למדפסת הלוקאלית במשרד</p>
+    <p class="meta">
+      ריפו:
+      <a href="https://github.com/MindCET/mindcet-printer" style="color:#93c5fd">github.com/MindCET/mindcet-printer</a>
+      &nbsp;·&nbsp;
+      <a href="https://mindcet-printer.netlify.app/" style="color:#93c5fd">mindcet-printer.netlify.app</a>
+    </p>
+  </header>
+
+  <!-- ARCHITECTURE -->
+  <section class="section">
+    <div class="section-title"><span class="dot dot-blue"></span> ארכיטקטורת המערכת</div>
+    <div class="card">
+      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1.25rem;">
+        המערכת בנויה משלושה שכבות שמתקשרות דרך Supabase כנקודת אמת מרכזית:
+      </p>
+      <div class="arch-flow">
+        <div class="arch-node done-node">
+          <div class="icon">🌐</div>
+          <div class="label">Web App</div>
+          <div class="sublabel">Next.js · Netlify</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node done-node highlight">
+          <div class="icon">🗄️</div>
+          <div class="label">Supabase</div>
+          <div class="sublabel">DB + Storage</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node missing-node">
+          <div class="icon">🖨️</div>
+          <div class="label">Print Agent</div>
+          <div class="sublabel">Windows · TypeScript</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+          <div class="icon">🖨️</div>
+          <div class="label">מדפסת</div>
+          <div class="sublabel">מדפסת רשת / USB</div>
+        </div>
+      </div>
+      <p style="color:var(--dim);font-size:0.82rem;text-align:center;">
+        ירוק = מוכן · אדום = חסר · אפור = מטרה
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT WE BUILT -->
+  <section class="section">
+    <div class="section-title"><span class="dot dot-green"></span> מה בנינו — הושלם</div>
+    <div class="task-grid">
+
+      <div class="task done">
+        <div class="task-header">
+          <div class="task-icon">🖥️</div>
+          <div>
+            <div class="task-title">ממשק משתמש — Web App</div>
+            <span class="task-tag tag-done">הושלם</span>
+          </div>
+        </div>
+        <div class="task-body">
+          Next.js + TypeScript על Netlify. טופס העלאה עם drag-and-drop, תצוגה מקדימה של PDF, הגדרות הדפסה (עותקים, צבע, דו-צדדי), פרטי משתמש.
+          <ul>
+            <li>קובץ: <code>apps/web/src/app/page.tsx</code></li>
+            <li>קובץ: <code>apps/web/src/app/upload-form.tsx</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task done">
+        <div class="task-header">
+          <div class="task-icon">🔌</div>
+          <div>
+            <div class="task-title">API — יצירת עבודת הדפסה</div>
+            <span class="task-tag tag-done">הושלם</span>
+          </div>
+        </div>
+        <div class="task-body">
+          Route מלא: ולידציה של הטופס, העלאת PDF ל-Supabase Storage, יצירת שורה ב-<code>print_jobs</code>, token מאובטח לסטטוס.
+          <ul>
+            <li>קובץ: <code>apps/web/src/app/api/jobs/create/route.ts</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task done">
+        <div class="task-header">
+          <div class="task-icon">🗂️</div>
+          <div>
+            <div class="task-title">סכמת Supabase</div>
+            <span class="task-tag tag-done">הושלם (צריך ניקוי)</span>
+          </div>
+        </div>
+        <div class="task-body">
+          טבלאות: <code>print_jobs</code>, <code>print_agents</code>, <code>app_settings</code>. Bucket: <code>print-files</code>. RLS וגישות הוגדרו.
+          <ul>
+            <li>תיקייה: <code>supabase/migrations/</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task done">
+        <div class="task-header">
+          <div class="task-icon">🛡️</div>
+          <div>
+            <div class="task-title">פאנל אדמין</div>
+            <span class="task-tag tag-done">הושלם</span>
+          </div>
+        </div>
+        <div class="task-body">
+          כניסה מאובטחת, תור עבודות הדפסה, צפייה בסוכנים, הגדרות מערכת (אישור ידני, מגבלות גודל, passcode).
+          <ul>
+            <li>תיקייה: <code>apps/web/src/app/admin/</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task done">
+        <div class="task-header">
+          <div class="task-icon">📄</div>
+          <div>
+            <div class="task-title">דף סטטוס לעבודת הדפסה</div>
+            <span class="task-tag tag-done">הושלם</span>
+          </div>
+        </div>
+        <div class="task-body">
+          אחרי שליחת טופס, המשתמש מנותב לדף <code>/status/[jobId]?token=...</code> שמציג את מצב ההדפסה בזמן אמת.
+          <ul>
+            <li>תיקייה: <code>apps/web/src/app/status/</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task done">
+        <div class="task-header">
+          <div class="task-icon">📬</div>
+          <div>
+            <div class="task-title">מערכת ישנה — Email-to-Print</div>
+            <span class="task-tag tag-done">MVP מלא</span>
+          </div>
+        </div>
+        <div class="task-body">
+          שרת Node.js מקומי שסורק IMAP, מסנן לפי <code>[PRINT]</code> בנושא, מדפיס PDF/תמונות ישירות ל-Windows printer.
+          <ul>
+            <li>קבצים: <code>server.js</code>, <code>index.html</code></li>
+            <li>פועל בנפרד מ-PrintDesk החדש</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- WHAT'S MISSING -->
+  <section class="section">
+    <div class="section-title"><span class="dot dot-red"></span> מה חסר — נדרש להשלמה</div>
+    <div class="task-grid">
+
+      <div class="task missing">
+        <div class="task-header">
+          <div class="task-icon">🤖</div>
+          <div>
+            <div class="task-title">Print Agent — לוגיקת הדפסה</div>
+            <span class="task-tag tag-missing">קריטי — חסר לחלוטין</span>
+          </div>
+        </div>
+        <div class="task-body">
+          הקובץ <code>apps/agent/src/index.ts</code> כרגע מדפיס רק "Phase 4 will add polling, claiming, downloading and printing." — הלוגיקה האמיתית לא קיימת.
+          <ul>
+            <li>❌ סקירת <code>print_jobs</code> בסוג <code>approved</code></li>
+            <li>❌ Claim atomically לעבודה (מניעת כפילויות)</li>
+            <li>❌ הורדת PDF מ-Supabase Storage</li>
+            <li>❌ הדפסה ב-SumatraPDF (שקטה, ב-Windows)</li>
+            <li>❌ עדכון סטטוס: <code>printing → printed / failed</code></li>
+            <li>❌ Heartbeat — Agent online/offline</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task missing">
+        <div class="task-header">
+          <div class="task-icon">🔑</div>
+          <div>
+            <div class="task-title">ENV ב-Netlify — חסרים</div>
+            <span class="task-tag tag-missing">קריטי — המערכת לא פועלת</span>
+          </div>
+        </div>
+        <div class="task-body">
+          הטופס שולח ל-<code>/api/jobs/create</code> אבל אם משתני הסביבה לא מוגדרים ב-Netlify — ה-API יחזיר שגיאה.
+          <ul>
+            <li>❌ <code>NEXT_PUBLIC_SUPABASE_URL</code></li>
+            <li>❌ <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code></li>
+            <li>❌ <code>SUPABASE_SERVICE_ROLE_KEY</code></li>
+            <li>❌ <code>ADMIN_EMAILS</code></li>
+          </ul>
+          <br/>יש להגדיר ב-Netlify → Site settings → Environment variables.
+        </div>
+      </div>
+
+      <div class="task missing">
+        <div class="task-header">
+          <div class="task-icon">🗃️</div>
+          <div>
+            <div class="task-title">ניקוי Migrations</div>
+            <span class="task-tag tag-missing">חשוב</span>
+          </div>
+        </div>
+        <div class="task-body">
+          קיימות 6 קבצי migration כולם עם prefix <code>0001_</code> — זה יוצר בלבול ושגיאות ב-<code>supabase db push</code>.
+          <ul>
+            <li>❌ יש לאחד לקובץ אחד: <code>0001_printdesk_schema.sql</code></li>
+            <li>❌ לוודא שה-schema פרוס על Supabase Production</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task stub">
+        <div class="task-header">
+          <div class="task-icon">📦</div>
+          <div>
+            <div class="task-title">התקנה ואריזה של ה-Agent</div>
+            <span class="task-tag tag-stub">חסר</span>
+          </div>
+        </div>
+        <div class="task-body">
+          אין עדיין דרך נוחה להתקין את ה-agent על מחשב Windows במשרד.
+          <ul>
+            <li>❌ <code>.env</code> עם SUPABASE_URL, AGENT_ID וכו'</li>
+            <li>❌ סקריפט <code>install.bat</code> / <code>setup.ps1</code></li>
+            <li>❌ הרצה כ-Windows Service (pm2 / NSSM)</li>
+            <li>❌ תיעוד התקנה</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task partial">
+        <div class="task-header">
+          <div class="task-icon">👁️</div>
+          <div>
+            <div class="task-title">תצוגה מקדימה של PDF</div>
+            <span class="task-tag tag-partial">חלקי</span>
+          </div>
+        </div>
+        <div class="task-body">
+          ה-<code>upload-form.tsx</code> כולל iframe לתצוגה מקדימה, אבל ב-Netlify הצפייה לא עובדת — ייתכן בגלל CSP או שגיאת הרשאות לקובץ blob.
+          <ul>
+            <li>⚠️ לבדוק ולתקן את מדיניות ה-CSP</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task partial">
+        <div class="task-header">
+          <div class="task-icon">🔔</div>
+          <div>
+            <div class="task-title">עדכון סטטוס בזמן אמת</div>
+            <span class="task-tag tag-partial">חלקי</span>
+          </div>
+        </div>
+        <div class="task-body">
+          דף הסטטוס קיים, אבל לא ברור אם יש polling/realtime subscription ל-Supabase שמעדכן אוטומטית.
+          <ul>
+            <li>⚠️ לוודא שיש Supabase Realtime subscription</li>
+            <li>⚠️ או polling כל 5 שניות כ-fallback</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- PRIORITY TABLE -->
+  <section class="section">
+    <div class="section-title"><span class="dot dot-orange"></span> טבלת עדיפויות — מה לעשות קודם</div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table class="priority-table">
+        <thead>
+          <tr>
+            <th style="width:40px;">#</th>
+            <th>משימה</th>
+            <th>עדיפות</th>
+            <th>זמן משוער</th>
+            <th>בלוק</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--dim)">1</td>
+            <td><strong>הגדרת ENV ב-Netlify</strong><br/><span style="color:var(--muted);font-size:0.82rem;">חיבור לב-Supabase אמיתי</span></td>
+            <td><span class="pill pill-critical">קריטי</span></td>
+            <td>30 דקות</td>
+            <td>חוסם הכל</td>
+          </tr>
+          <tr>
+            <td style="color:var(--dim)">2</td>
+            <td><strong>ניקוי ו-push של ה-Migration</strong><br/><span style="color:var(--muted);font-size:0.82rem;">schema אחד ברור על Supabase</span></td>
+            <td><span class="pill pill-critical">קריטי</span></td>
+            <td>1 שעה</td>
+            <td>חוסם ה-Agent</td>
+          </tr>
+          <tr>
+            <td style="color:var(--dim)">3</td>
+            <td><strong>Print Agent — polling + claiming</strong><br/><span style="color:var(--muted);font-size:0.82rem;">סקירת DB, claim atomico, עדכון סטטוס</span></td>
+            <td><span class="pill pill-critical">קריטי</span></td>
+            <td>4–6 שעות</td>
+            <td>ליבת המוצר</td>
+          </tr>
+          <tr>
+            <td style="color:var(--dim)">4</td>
+            <td><strong>Print Agent — הורדה והדפסה</strong><br/><span style="color:var(--muted);font-size:0.82rem;">Download מ-Storage, print דרך SumatraPDF</span></td>
+            <td><span class="pill pill-critical">קריטי</span></td>
+            <td>3–4 שעות</td>
+            <td>תלוי ב-#3</td>
+          </tr>
+          <tr>
+            <td style="color:var(--dim)">5</td>
+            <td><strong>Agent — Heartbeat &amp; Registration</strong><br/><span style="color:var(--muted);font-size:0.82rem;">כתיבה ל-<code>print_agents</code>, online/offline</span></td>
+            <td><span class="pill pill-high">גבוהה</span></td>
+            <td>1–2 שעות</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td style="color:var(--dim)">6</td>
+            <td><strong>סקריפט התקנה ל-Agent</strong><br/><span style="color:var(--muted);font-size:0.82rem;">setup.ps1 + הרצה כ-Windows Service</span></td>
+            <td><span class="pill pill-high">גבוהה</span></td>
+            <td>2 שעות</td>
+            <td>תלוי ב-#4</td>
+          </tr>
+          <tr>
+            <td style="color:var(--dim)">7</td>
+            <td><strong>תיקון תצוגה מקדימה של PDF</strong><br/><span style="color:var(--muted);font-size:0.82rem;">iframe / CSP ב-Netlify</span></td>
+            <td><span class="pill pill-medium">בינונית</span></td>
+            <td>1 שעה</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td style="color:var(--dim)">8</td>
+            <td><strong>Realtime עדכון דף סטטוס</strong><br/><span style="color:var(--muted);font-size:0.82rem;">Supabase subscription או polling</span></td>
+            <td><span class="pill pill-medium">בינונית</span></td>
+            <td>1–2 שעות</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td style="color:var(--dim)">9</td>
+            <td><strong>בדיקת E2E מלאה</strong><br/><span style="color:var(--muted);font-size:0.82rem;">Upload → Supabase → Agent → Printer</span></td>
+            <td><span class="pill pill-low">אחרון</span></td>
+            <td>2–3 שעות</td>
+            <td>תלוי בכל השאר</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- TIMELINE -->
+  <section class="section">
+    <div class="section-title"><span class="dot dot-purple"></span> ציר הזמן של הפיתוח</div>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item done-phase">
+          <div class="tl-label">Phase 1 — הושלם ✓</div>
+          <div class="tl-title">MVP של Email-to-Print</div>
+          <div class="tl-desc">שרת Node.js מקומי + ממשק גלאסמורפיזם. מסנן מיילים ב-IMAP ומדפיס קבצים ישירות.</div>
+        </div>
+        <div class="tl-item done-phase">
+          <div class="tl-label">Phase 2 — הושלם ✓</div>
+          <div class="tl-title">PrintDesk Web App</div>
+          <div class="tl-desc">Next.js + Supabase. טופס העלאה, API ליצירת עבודה, פאנל אדמין, הגדרות מערכת. פרוס ב-Netlify.</div>
+        </div>
+        <div class="tl-item done-phase">
+          <div class="tl-label">Phase 3 — הושלם ✓</div>
+          <div class="tl-title">Infrastructure ו-Schema</div>
+          <div class="tl-desc">סכמת Supabase מלאה, טיפוסי TypeScript, Admin auth, Storage bucket, RLS policies.</div>
+        </div>
+        <div class="tl-item missing-phase">
+          <div class="tl-label">Phase 4 — חסר ❌</div>
+          <div class="tl-title">Print Agent — הלוגיקה האמיתית</div>
+          <div class="tl-desc">Polling, Claiming, Download, Print, Status update, Heartbeat. זה הלב החסר של המערכת כולה.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-label">Phase 5 — עתיד</div>
+          <div class="tl-title">Production Deployment</div>
+          <div class="tl-desc">Agent מותקן כ-Windows Service, ENV ב-Netlify, בדיקת E2E, הדרכת משתמשים.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- FILES REFERENCE -->
+  <section class="section">
+    <div class="section-title"><span class="dot dot-blue"></span> מפת קבצי הפרויקט</div>
+    <div class="card">
+      <ul class="checklist">
+        <li>
+          <span class="check-icon">🌐</span>
+          <div class="check-text">
+            <strong><code>apps/web/</code> — Next.js Web App</strong>
+            <span><code>src/app/page.tsx</code> דף ראשי · <code>upload-form.tsx</code> טופס · <code>api/jobs/create/</code> API · <code>admin/</code> פאנל ניהול · <code>status/</code> דף סטטוס · <code>src/lib/</code> Supabase clients, types, settings</span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">🤖</span>
+          <div class="check-text">
+            <strong><code>apps/agent/src/index.ts</code> — Print Agent</strong>
+            <span>⚠️ כרגע Bootstrap בלבד. לא כולל polling, claiming, download, ו-print.</span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">🗃️</span>
+          <div class="check-text">
+            <strong><code>supabase/migrations/</code> — DB Schema</strong>
+            <span>6 קבצי migration עם prefix 0001_ — צריך לאחד לקובץ אחד ולהריץ <code>supabase db push</code></span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">📬</span>
+          <div class="check-text">
+            <strong><code>server.js</code> + <code>index.html</code> — Legacy Email Printer</strong>
+            <span>מערכת ישנה ועצמאית לחלוטין. עובדת טוב כ-MVP לוקאלי אבל לא מחוברת ל-PrintDesk החדש.</span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">⚙️</span>
+          <div class="check-text">
+            <strong><code>apps/web/.env.example</code> — משתני סביבה</strong>
+            <span>SUPABASE_URL, ANON_KEY, SERVICE_ROLE_KEY, ADMIN_EMAILS — כולם חייבים להיות מוגדרים ב-Netlify</span>
+          </div>
+        </li>
+        <li>
+          <span class="check-icon">📦</span>
+          <div class="check-text">
+            <strong><code>package.json</code> — Monorepo Scripts</strong>
+            <span><code>npm run dev:web</code> / <code>dev:agent</code> / <code>legacy:email-printer</code></span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="text-align:center;color:var(--dim);font-size:0.82rem;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border);">
+    PrintDesk · MindCET · נוצר אוטומטית על ידי Claude Code · מאי 2026
+  </footer>
+
+</div>
+</body>
+</html>
