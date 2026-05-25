@@ -1,6 +1,7 @@
 import type { ColorMode, DuplexMode, PrintJobStatus } from "./types";
 
 export const statusLabels: Record<PrintJobStatus, string> = {
+  uploading: "מעלה קובץ",
   pending: "ממתין לאישור",
   approved: "ממתין בתור",
   claimed: "נאסף על ידי מחשב ההדפסה",
@@ -13,6 +14,7 @@ export const statusLabels: Record<PrintJobStatus, string> = {
 };
 
 export const statusMessages: Record<PrintJobStatus, string> = {
+  uploading: "הקובץ מועלה כעת.",
   pending: "העבודה שלך ממתינה לאישור צוות המרחב.",
   approved: "העבודה שלך ממתינה בתור ההדפסה.",
   claimed: "מחשב ההדפסה אסף את העבודה.",

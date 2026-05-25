@@ -1,4 +1,5 @@
 export type PrintJobStatus =
+  | "uploading"
   | "pending"
   | "approved"
   | "claimed"
