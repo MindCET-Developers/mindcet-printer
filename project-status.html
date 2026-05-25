@@ -371,13 +371,13 @@
           <div class="task-icon">🗂️</div>
           <div>
             <div class="task-title">סכמת Supabase</div>
-            <span class="task-tag tag-done">הושלם (צריך ניקוי)</span>
+            <span class="task-tag tag-done">הושלם</span>
           </div>
         </div>
         <div class="task-body">
-          טבלאות: <code>print_jobs</code>, <code>print_agents</code>, <code>app_settings</code>. Bucket: <code>print-files</code>. RLS וגישות הוגדרו.
+          טבלאות: <code>print_jobs</code>, <code>print_agents</code>, <code>app_settings</code>. Bucket: <code>print-files</code>. ה-migrations אוחדו לקובץ אחד נקי.
           <ul>
-            <li>תיקייה: <code>supabase/migrations/</code></li>
+            <li>קובץ: <code>supabase/migrations/0001_printdesk_schema.sql</code></li>
           </ul>
         </div>
       </div>
@@ -402,14 +402,69 @@
         <div class="task-header">
           <div class="task-icon">📄</div>
           <div>
-            <div class="task-title">דף סטטוס לעבודת הדפסה</div>
+            <div class="task-title">דף סטטוס חי לעבודת הדפסה</div>
             <span class="task-tag tag-done">הושלם</span>
           </div>
         </div>
         <div class="task-body">
-          אחרי שליחת טופס, המשתמש מנותב לדף <code>/status/[jobId]?token=...</code> שמציג את מצב ההדפסה בזמן אמת.
+          אחרי שליחת טופס, המשתמש מנותב לדף <code>/status/[jobId]?token=...</code>. הדף נטען מהר מהשרת וממשיך להתעדכן אוטומטית כל שנייה דרך <code>/api/jobs/status</code>.
           <ul>
             <li>תיקייה: <code>apps/web/src/app/status/</code></li>
+            <li>קובץ: <code>apps/web/src/app/status/[jobId]/status-live.tsx</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task done">
+        <div class="task-header">
+          <div class="task-icon">👁️</div>
+          <div>
+            <div class="task-title">תצוגה מקדימה של PDF</div>
+            <span class="task-tag tag-done">הושלם</span>
+          </div>
+        </div>
+        <div class="task-body">
+          טופס ההעלאה מציג PDF מקומי לפני שליחה, כולל fallback לפתיחה בטאב חדש אם הדפדפן חוסם הטמעה.
+          <ul>
+            <li>קובץ: <code>apps/web/src/app/upload-form.tsx</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task done">
+        <div class="task-header">
+          <div class="task-icon">🤖</div>
+          <div>
+            <div class="task-title">Print Agent — לוגיקת הדפסה</div>
+            <span class="task-tag tag-done">הושלם</span>
+          </div>
+        </div>
+        <div class="task-body">
+          ה-Agent תוכנת במלואו בקובץ <code>apps/agent/src/index.ts</code> וכולל את כל תהליך ההדפסה.
+          <ul>
+            <li>✅ סקירת <code>print_jobs</code> ונעילת עבודה (Claim)</li>
+            <li>✅ הורדת PDF מ-Supabase Storage</li>
+            <li>✅ הדפסה דרך SumatraPDF</li>
+            <li>✅ עדכון סטטוסים (printing, printed, failed)</li>
+            <li>✅ רישום (Registration) ו-Heartbeat</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="task done">
+        <div class="task-header">
+          <div class="task-icon">📦</div>
+          <div>
+            <div class="task-title">התקנה בסיסית של ה-Agent</div>
+            <span class="task-tag tag-done">הושלם חלקית</span>
+          </div>
+        </div>
+        <div class="task-body">
+          נכתב סקריפט <code>setup.ps1</code> שמייצר <code>.env</code>, מתקין dependencies, בונה את ה-Agent ומפעיל אותו דרך PM2.
+          <ul>
+            <li>✅ סקריפט <code>setup.ps1</code> מוכן.</li>
+            <li>✅ יצירת <code>.env</code> אינטראקטיבית</li>
+            <li>✅ הרצה ברקע דרך <code>PM2</code></li>
           </ul>
         </div>
       </div>
@@ -443,110 +498,37 @@
 
       <div class="task missing">
         <div class="task-header">
-          <div class="task-icon">🤖</div>
-          <div>
-            <div class="task-title">Print Agent — לוגיקת הדפסה</div>
-            <span class="task-tag tag-missing">קריטי — חסר לחלוטין</span>
-          </div>
-        </div>
-        <div class="task-body">
-          הקובץ <code>apps/agent/src/index.ts</code> כרגע מדפיס רק "Phase 4 will add polling, claiming, downloading and printing." — הלוגיקה האמיתית לא קיימת.
-          <ul>
-            <li>❌ סקירת <code>print_jobs</code> בסוג <code>approved</code></li>
-            <li>❌ Claim atomically לעבודה (מניעת כפילויות)</li>
-            <li>❌ הורדת PDF מ-Supabase Storage</li>
-            <li>❌ הדפסה ב-SumatraPDF (שקטה, ב-Windows)</li>
-            <li>❌ עדכון סטטוס: <code>printing → printed / failed</code></li>
-            <li>❌ Heartbeat — Agent online/offline</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="task missing">
-        <div class="task-header">
           <div class="task-icon">🔑</div>
           <div>
-            <div class="task-title">ENV ב-Netlify — חסרים</div>
-            <span class="task-tag tag-missing">קריטי — המערכת לא פועלת</span>
+            <div class="task-title">בדיקת ENV ב-Netlify Production</div>
+            <span class="task-tag tag-missing">לא אומת בקוד</span>
           </div>
         </div>
         <div class="task-body">
-          הטופס שולח ל-<code>/api/jobs/create</code> אבל אם משתני הסביבה לא מוגדרים ב-Netlify — ה-API יחזיר שגיאה.
+          לפי ההתקדמות דווח שהוגדרו משתני הסביבה, אבל עדיין צריך לוודא שה-build וה-API בפרודקשן באמת קוראים אותם.
           <ul>
-            <li>❌ <code>NEXT_PUBLIC_SUPABASE_URL</code></li>
-            <li>❌ <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code></li>
-            <li>❌ <code>SUPABASE_SERVICE_ROLE_KEY</code></li>
-            <li>❌ <code>ADMIN_EMAILS</code></li>
-          </ul>
-          <br/>יש להגדיר ב-Netlify → Site settings → Environment variables.
-        </div>
-      </div>
-
-      <div class="task missing">
-        <div class="task-header">
-          <div class="task-icon">🗃️</div>
-          <div>
-            <div class="task-title">ניקוי Migrations</div>
-            <span class="task-tag tag-missing">חשוב</span>
-          </div>
-        </div>
-        <div class="task-body">
-          קיימות 6 קבצי migration כולם עם prefix <code>0001_</code> — זה יוצר בלבול ושגיאות ב-<code>supabase db push</code>.
-          <ul>
-            <li>❌ יש לאחד לקובץ אחד: <code>0001_printdesk_schema.sql</code></li>
-            <li>❌ לוודא שה-schema פרוס על Supabase Production</li>
+            <li>⚠️ <code>NEXT_PUBLIC_SUPABASE_URL</code></li>
+            <li>⚠️ <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code></li>
+            <li>⚠️ <code>SUPABASE_SERVICE_ROLE_KEY</code></li>
+            <li>⚠️ <code>ADMIN_EMAILS</code></li>
           </ul>
         </div>
       </div>
 
       <div class="task stub">
         <div class="task-header">
-          <div class="task-icon">📦</div>
+          <div class="task-icon">🧰</div>
           <div>
-            <div class="task-title">התקנה ואריזה של ה-Agent</div>
-            <span class="task-tag tag-stub">חסר</span>
+            <div class="task-title">הקשחת התקנת ה-Agent</div>
+            <span class="task-tag tag-stub">נשאר</span>
           </div>
         </div>
         <div class="task-body">
-          אין עדיין דרך נוחה להתקין את ה-agent על מחשב Windows במשרד.
+          סקריפט ההתקנה קיים, אבל לפני התקנה במשרד כדאי לבדוק אותו על מחשב Windows נקי ולתעד את התהליך.
           <ul>
-            <li>❌ <code>.env</code> עם SUPABASE_URL, AGENT_ID וכו'</li>
-            <li>❌ סקריפט <code>install.bat</code> / <code>setup.ps1</code></li>
-            <li>❌ הרצה כ-Windows Service (pm2 / NSSM)</li>
-            <li>❌ תיעוד התקנה</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="task partial">
-        <div class="task-header">
-          <div class="task-icon">👁️</div>
-          <div>
-            <div class="task-title">תצוגה מקדימה של PDF</div>
-            <span class="task-tag tag-partial">חלקי</span>
-          </div>
-        </div>
-        <div class="task-body">
-          ה-<code>upload-form.tsx</code> כולל iframe לתצוגה מקדימה, אבל ב-Netlify הצפייה לא עובדת — ייתכן בגלל CSP או שגיאת הרשאות לקובץ blob.
-          <ul>
-            <li>⚠️ לבדוק ולתקן את מדיניות ה-CSP</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="task partial">
-        <div class="task-header">
-          <div class="task-icon">🔔</div>
-          <div>
-            <div class="task-title">עדכון סטטוס בזמן אמת</div>
-            <span class="task-tag tag-partial">חלקי</span>
-          </div>
-        </div>
-        <div class="task-body">
-          דף הסטטוס קיים, אבל לא ברור אם יש polling/realtime subscription ל-Supabase שמעדכן אוטומטית.
-          <ul>
-            <li>⚠️ לוודא שיש Supabase Realtime subscription</li>
-            <li>⚠️ או polling כל 5 שניות כ-fallback</li>
+            <li>⚠️ בדיקה שה-Agent עולה אחרי restart</li>
+            <li>⚠️ בדיקת הרשאות ל-PM2 / Windows Startup</li>
+            <li>⚠️ תיעוד התקנה קצר לצוות</li>
           </ul>
         </div>
       </div>
@@ -572,57 +554,57 @@
         </thead>
         <tbody>
           <tr>
-            <td style="color:var(--dim)">1</td>
-            <td><strong>הגדרת ENV ב-Netlify</strong><br/><span style="color:var(--muted);font-size:0.82rem;">חיבור לב-Supabase אמיתי</span></td>
+            <td><del>1</del></td>
+            <td><del><strong>הגדרת ENV ב-Netlify</strong></del><br/><span style="color:var(--muted);font-size:0.82rem;">חיבור לב-Supabase אמיתי</span></td>
             <td><span class="pill pill-critical">קריטי</span></td>
             <td>30 דקות</td>
             <td>חוסם הכל</td>
           </tr>
           <tr>
-            <td style="color:var(--dim)">2</td>
-            <td><strong>ניקוי ו-push של ה-Migration</strong><br/><span style="color:var(--muted);font-size:0.82rem;">schema אחד ברור על Supabase</span></td>
+            <td><del>2</del></td>
+            <td><del><strong>ניקוי ו-push של ה-Migration</strong></del><br/><span style="color:var(--muted);font-size:0.82rem;">schema אחד ברור על Supabase</span></td>
             <td><span class="pill pill-critical">קריטי</span></td>
             <td>1 שעה</td>
             <td>חוסם ה-Agent</td>
           </tr>
           <tr>
-            <td style="color:var(--dim)">3</td>
-            <td><strong>Print Agent — polling + claiming</strong><br/><span style="color:var(--muted);font-size:0.82rem;">סקירת DB, claim atomico, עדכון סטטוס</span></td>
+            <td><del>3</del></td>
+            <td><del><strong>Print Agent — polling + claiming</strong></del><br/><span style="color:var(--muted);font-size:0.82rem;">סקירת DB, claim atomico, עדכון סטטוס</span></td>
             <td><span class="pill pill-critical">קריטי</span></td>
             <td>4–6 שעות</td>
             <td>ליבת המוצר</td>
           </tr>
           <tr>
-            <td style="color:var(--dim)">4</td>
-            <td><strong>Print Agent — הורדה והדפסה</strong><br/><span style="color:var(--muted);font-size:0.82rem;">Download מ-Storage, print דרך SumatraPDF</span></td>
+            <td><del>4</del></td>
+            <td><del><strong>Print Agent — הורדה והדפסה</strong></del><br/><span style="color:var(--muted);font-size:0.82rem;">Download מ-Storage, print דרך SumatraPDF</span></td>
             <td><span class="pill pill-critical">קריטי</span></td>
             <td>3–4 שעות</td>
             <td>תלוי ב-#3</td>
           </tr>
           <tr>
-            <td style="color:var(--dim)">5</td>
-            <td><strong>Agent — Heartbeat &amp; Registration</strong><br/><span style="color:var(--muted);font-size:0.82rem;">כתיבה ל-<code>print_agents</code>, online/offline</span></td>
+            <td><del>5</del></td>
+            <td><del><strong>Agent — Heartbeat &amp; Registration</strong></del><br/><span style="color:var(--muted);font-size:0.82rem;">כתיבה ל-<code>print_agents</code>, online/offline</span></td>
             <td><span class="pill pill-high">גבוהה</span></td>
             <td>1–2 שעות</td>
             <td>—</td>
           </tr>
           <tr>
-            <td style="color:var(--dim)">6</td>
-            <td><strong>סקריפט התקנה ל-Agent</strong><br/><span style="color:var(--muted);font-size:0.82rem;">setup.ps1 + הרצה כ-Windows Service</span></td>
+            <td><del>6</del></td>
+            <td><del><strong>סקריפט התקנה ל-Agent</strong><br/><span style="color:var(--muted);font-size:0.82rem;">setup.ps1 + הרצה כ-Windows Service</span></del></td>
             <td><span class="pill pill-high">גבוהה</span></td>
             <td>2 שעות</td>
             <td>תלוי ב-#4</td>
           </tr>
           <tr>
-            <td style="color:var(--dim)">7</td>
-            <td><strong>תיקון תצוגה מקדימה של PDF</strong><br/><span style="color:var(--muted);font-size:0.82rem;">iframe / CSP ב-Netlify</span></td>
+            <td><del>7</del></td>
+            <td><del><strong>תיקון תצוגה מקדימה של PDF</strong></del><br/><span style="color:var(--muted);font-size:0.82rem;">object/iframe fallback + פתיחה בטאב</span></td>
             <td><span class="pill pill-medium">בינונית</span></td>
             <td>1 שעה</td>
             <td>—</td>
           </tr>
           <tr>
-            <td style="color:var(--dim)">8</td>
-            <td><strong>Realtime עדכון דף סטטוס</strong><br/><span style="color:var(--muted);font-size:0.82rem;">Supabase subscription או polling</span></td>
+            <td><del>8</del></td>
+            <td><del><strong>Realtime עדכון דף סטטוס</strong></del><br/><span style="color:var(--muted);font-size:0.82rem;">Polling כל שנייה דרך API</span></td>
             <td><span class="pill pill-medium">בינונית</span></td>
             <td>1–2 שעות</td>
             <td>—</td>
@@ -661,10 +643,10 @@
           <div class="tl-title">Infrastructure ו-Schema</div>
           <div class="tl-desc">סכמת Supabase מלאה, טיפוסי TypeScript, Admin auth, Storage bucket, RLS policies.</div>
         </div>
-        <div class="tl-item missing-phase">
-          <div class="tl-label">Phase 4 — חסר ❌</div>
-          <div class="tl-title">Print Agent — הלוגיקה האמיתית</div>
-          <div class="tl-desc">Polling, Claiming, Download, Print, Status update, Heartbeat. זה הלב החסר של המערכת כולה.</div>
+        <div class="tl-item done-phase">
+          <div class="tl-label">Phase 4 — הושלם ✓</div>
+          <div class="tl-title">Print Agent — לוגיקה ואדריכלות</div>
+          <div class="tl-desc">Polling, Claiming, Download, Print, Status update, Heartbeat. ה-Agent פועל במלואו.</div>
         </div>
         <div class="tl-item">
           <div class="tl-label">Phase 5 — עתיד</div>
@@ -693,14 +675,14 @@
           <span class="check-icon">🤖</span>
           <div class="check-text">
             <strong><code>apps/agent/src/index.ts</code> — Print Agent</strong>
-            <span>⚠️ כרגע Bootstrap בלבד. לא כולל polling, claiming, download, ו-print.</span>
+            <span>הסוכן תוכנת במלואו וכולל משיכת עבודות, הורדה והדפסה.</span>
           </div>
         </li>
         <li>
           <span class="check-icon">🗃️</span>
           <div class="check-text">
             <strong><code>supabase/migrations/</code> — DB Schema</strong>
-            <span>6 קבצי migration עם prefix 0001_ — צריך לאחד לקובץ אחד ולהריץ <code>supabase db push</code></span>
+            <span>סכמה נקייה ומאוחדת (קובץ יחיד).</span>
           </div>
         </li>
         <li>

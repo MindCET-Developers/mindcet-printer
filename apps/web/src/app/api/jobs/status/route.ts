@@ -3,16 +3,19 @@ import { publicSetupError } from "@/lib/api-errors";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createServiceClient } from "@/lib/supabase-admin";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: NextRequest) {
   if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: "Supabase לא מוגדר." }, { status: 500 });
+    return statusJson({ error: "Supabase לא מוגדר." }, 500);
   }
 
   const jobId = request.nextUrl.searchParams.get("jobId");
   const token = request.nextUrl.searchParams.get("token");
 
   if (!jobId || !token) {
-    return NextResponse.json({ error: "חסר jobId או token." }, { status: 400 });
+    return statusJson({ error: "חסר jobId או token." }, 400);
   }
 
   const supabase = createServiceClient();
@@ -24,12 +27,23 @@ export async function GET(request: NextRequest) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: publicSetupError(error) }, { status: 500 });
+    return statusJson({ error: publicSetupError(error) }, 500);
   }
 
   if (!job) {
-    return NextResponse.json({ error: "העבודה לא נמצאה." }, { status: 404 });
+    return statusJson({ error: "העבודה לא נמצאה." }, 404);
   }
 
-  return NextResponse.json({ job });
+  return statusJson({ job });
+}
+
+function statusJson(body: unknown, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      Pragma: "no-cache",
+      Expires: "0"
+    }
+  });
 }

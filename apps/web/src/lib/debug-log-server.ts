@@ -1,8 +1,9 @@
 import { appendFileSync } from "node:fs";
 import { join } from "node:path";
 
-const DEBUG_SESSION = "c4c61d";
-const LOG_FILE = join(process.cwd(), "..", "..", "debug-c4c61d.log");
+const DEBUG_ENDPOINT = process.env.DEBUG_LOG_ENDPOINT;
+const DEBUG_SESSION = process.env.DEBUG_SESSION_ID || "local";
+const LOG_FILE = process.env.DEBUG_LOG_FILE || join(process.cwd(), "..", "..", "debug-local.log");
 
 export function debugLogServer(
   location: string,
@@ -11,6 +12,8 @@ export function debugLogServer(
   hypothesisId: string,
   runId = "pre-fix"
 ) {
+  if (!DEBUG_ENDPOINT && process.env.DEBUG_LOG_TO_FILE !== "true") return;
+
   const payload = {
     sessionId: DEBUG_SESSION,
     runId,
@@ -22,19 +25,23 @@ export function debugLogServer(
   };
 
   // #region agent log
-  try {
-    appendFileSync(LOG_FILE, `${JSON.stringify(payload)}\n`, "utf8");
-  } catch {
-    // ignore file logging errors
+  if (process.env.DEBUG_LOG_TO_FILE === "true") {
+    try {
+      appendFileSync(LOG_FILE, `${JSON.stringify(payload)}\n`, "utf8");
+    } catch {
+      // ignore file logging errors
+    }
   }
 
-  fetch("http://127.0.0.1:7336/ingest/640973ff-4a0d-43e4-bf12-61fdcd37e420", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": DEBUG_SESSION
-    },
-    body: JSON.stringify(payload)
-  }).catch(() => {});
+  if (DEBUG_ENDPOINT) {
+    fetch(DEBUG_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": DEBUG_SESSION
+      },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  }
   // #endregion
 }

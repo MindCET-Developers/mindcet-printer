@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { publicSetupError } from "@/lib/api-errors";
 import { createServiceClient } from "@/lib/supabase-admin";
-import { colorModeLabels, duplexModeLabels, formatDateTime, statusLabels, statusMessages } from "@/lib/status";
-import type { ColorMode, DuplexMode, PrintJobStatus } from "@/lib/types";
+import { StatusLive } from "./status-live";
 
 type StatusPageProps = {
   params: { jobId: string };
@@ -29,57 +28,9 @@ export default async function StatusPage({ params, searchParams }: StatusPagePro
       return <StatusError title="לא מצאנו את העבודה" message="ייתכן שהקישור שגוי או שפג תוקף הגישה." />;
     }
 
-    const status = job.status as PrintJobStatus;
-
-    return (
-      <main className="status-shell">
-        <section className="status-card">
-          <Link className="back-link" href="/">
-            העלאת עבודה נוספת
-          </Link>
-          <p className="eyebrow">סטטוס עבודה</p>
-          <h1>{statusLabels[status]}</h1>
-          <p className="lead">{statusMessages[status]}</p>
-          <div className={`status-badge status-${status}`}>{statusLabels[status]}</div>
-
-          <dl className="details-list">
-            <div>
-              <dt>מספר עבודה</dt>
-              <dd>{job.id}</dd>
-            </div>
-            <div>
-              <dt>שם קובץ</dt>
-              <dd>{job.file_name}</dd>
-            </div>
-            <div>
-              <dt>נשלח</dt>
-              <dd>{formatDateTime(job.created_at)}</dd>
-            </div>
-            <div>
-              <dt>עותקים</dt>
-              <dd>{job.copies}</dd>
-            </div>
-            <div>
-              <dt>צבע</dt>
-              <dd>{colorModeLabels[job.color_mode as ColorMode]}</dd>
-            </div>
-            <div>
-              <dt>דו-צדדי</dt>
-              <dd>{duplexModeLabels[job.duplex_mode as DuplexMode]}</dd>
-            </div>
-          </dl>
-
-          {status === "failed" && job.error_message ? <div className="alert error">{job.error_message}</div> : null}
-        </section>
-      </main>
-    );
+    return <StatusLive initialJob={job} jobId={params.jobId} token={token} />;
   } catch (error) {
-    return (
-      <StatusError
-        title="הסטטוס לא זמין"
-        message={publicSetupError(error)}
-      />
-    );
+    return <StatusError title="הסטטוס לא זמין" message={publicSetupError(error)} />;
   }
 }
 

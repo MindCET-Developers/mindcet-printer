@@ -30,6 +30,23 @@ export function UploadForm() {
     return `${file.name} · ${mb.toFixed(mb >= 10 ? 0 : 1)}MB`;
   }, [file]);
 
+  function handleFileChange(nextFile?: File) {
+    if (!nextFile) {
+      setFile(null);
+      return;
+    }
+
+    const isPdf = nextFile.type === "application/pdf" || nextFile.name.toLowerCase().endsWith(".pdf");
+    if (!isPdf) {
+      setFile(null);
+      setState({ type: "error", message: "אפשר להעלות רק קובץ PDF." });
+      return;
+    }
+
+    setState({ type: "idle" });
+    setFile(nextFile);
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setState({ type: "submitting" });
@@ -103,7 +120,7 @@ export function UploadForm() {
               type="file"
               accept="application/pdf,.pdf"
               required
-              onChange={(event) => setFile(event.target.files?.[0] || null)}
+              onChange={(event) => handleFileChange(event.target.files?.[0])}
             />
             <strong>{file ? "קובץ נבחר" : "גרור או בחר PDF"}</strong>
             <small>{fileHint}</small>
@@ -129,7 +146,14 @@ export function UploadForm() {
         </div>
         <div className="pdf-preview">
           {previewUrl ? (
-            <iframe title="תצוגה מקדימה של PDF" src={previewUrl} />
+            <div className="pdf-preview-frame">
+              <object data={previewUrl} type="application/pdf" aria-label="תצוגה מקדימה של PDF">
+                <iframe title="תצוגה מקדימה של PDF" src={previewUrl} />
+              </object>
+              <a className="preview-open-link" href={previewUrl} target="_blank" rel="noreferrer">
+                פתיחת התצוגה בטאב חדש
+              </a>
+            </div>
           ) : (
             <div className="empty-preview">
               <span>PDF</span>

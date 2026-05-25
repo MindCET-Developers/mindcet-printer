@@ -297,7 +297,11 @@ begin
   update public.print_agents
   set
     last_seen_at = now(),
-    status = case when p_new_status = 'failed' then 'error' else 'online' end,
+    status = case
+      when p_new_status = 'failed' then 'error'
+      when p_new_status in ('claimed', 'downloading', 'printing') then 'printing'
+      else 'online'
+    end,
     current_job_id = case when p_new_status in ('printed', 'failed') then null else p_job_id end,
     last_error = case when p_new_status = 'failed' then p_error_message else null end
   where id = p_agent_id;

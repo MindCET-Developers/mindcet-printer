@@ -1,5 +1,5 @@
-const DEBUG_ENDPOINT = "http://127.0.0.1:7336/ingest/640973ff-4a0d-43e4-bf12-61fdcd37e420";
-const DEBUG_SESSION = "c4c61d";
+const DEBUG_ENDPOINT = process.env.NEXT_PUBLIC_DEBUG_LOG_ENDPOINT;
+const DEBUG_SESSION = process.env.NEXT_PUBLIC_DEBUG_SESSION_ID || "local";
 
 export function debugLog(
   location: string,
@@ -8,6 +8,8 @@ export function debugLog(
   hypothesisId: string,
   runId = "pre-fix"
 ) {
+  if (!DEBUG_ENDPOINT) return;
+
   const payload = {
     sessionId: DEBUG_SESSION,
     runId,
