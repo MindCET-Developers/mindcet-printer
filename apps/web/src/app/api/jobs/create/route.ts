@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/env";
 import { publicSetupError } from "@/lib/api-errors";
 import { sanitizePdfFileName } from "@/lib/files";
+import { verifyPasscode } from "@/lib/passcode";
 import { readAppSettings } from "@/lib/settings";
 import { createServiceClient } from "@/lib/supabase-admin";
 import type { ColorMode, DuplexMode } from "@/lib/types";
@@ -38,6 +39,15 @@ export async function POST(request: NextRequest) {
   const confirmed = body.confirmed === true || body.confirmed === "yes";
   const fileName = typeof body.file_name === "string" ? body.file_name.trim() : "";
   const fileSizeBytes = typeof body.file_size_bytes === "number" ? body.file_size_bytes : 0;
+  const uploadPasscode = typeof body.upload_passcode === "string" ? body.upload_passcode.trim() : "";
+
+  if (settings.upload_passcode_enabled && !settings.upload_passcode_configured) {
+    return NextResponse.json({ error: "קוד העלאה לא מוגדר במערכת." }, { status: 503 });
+  }
+
+  if (settings.upload_passcode_enabled && !verifyPasscode(uploadPasscode, settings.upload_passcode_hash)) {
+    return NextResponse.json({ error: "קוד ההעלאה שגוי." }, { status: 401 });
+  }
 
   if (!userName || userName.length < 2) {
     return NextResponse.json({ error: "יש להזין שם מלא." }, { status: 400 });

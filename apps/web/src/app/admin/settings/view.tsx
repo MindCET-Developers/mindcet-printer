@@ -34,7 +34,8 @@ function SettingsInner({ token }: { token: string }) {
       manual_approval_required: form.get("manual_approval_required") === "on",
       max_file_size_mb: Number(form.get("max_file_size_mb")),
       max_page_count: Number(form.get("max_page_count")),
-      upload_passcode_enabled: form.get("upload_passcode_enabled") === "on"
+      upload_passcode_enabled: form.get("upload_passcode_enabled") === "on",
+      upload_passcode: String(form.get("upload_passcode") || "")
     };
 
     const response = await fetch("/api/admin/settings", {
@@ -88,6 +89,14 @@ function SettingsInner({ token }: { token: string }) {
         <label className="toggle-row">
           <input name="upload_passcode_enabled" type="checkbox" defaultChecked={settings.upload_passcode_enabled} />
           <span>קוד העלאה פעיל</span>
+        </label>
+        <label>
+          <span>קוד העלאה חדש</span>
+          <input
+            name="upload_passcode"
+            type="password"
+            placeholder={settings.upload_passcode_configured ? "מוגדר - השאירו ריק כדי לא לשנות" : "יש להזין קוד לפני הפעלה"}
+          />
         </label>
         <label>
           <span>גודל קובץ מקסימלי ב-MB</span>

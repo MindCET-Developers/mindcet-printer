@@ -8,7 +8,7 @@ type SubmitState =
   | { type: "error"; message: string }
   | { type: "success"; message: string };
 
-export function UploadForm() {
+export function UploadForm({ uploadPasscodeEnabled }: { uploadPasscodeEnabled?: boolean }) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [state, setState] = useState<SubmitState>({ type: "idle" });
@@ -68,6 +68,9 @@ export function UploadForm() {
         duplex_mode: (form.elements.namedItem("duplex_mode") as HTMLSelectElement).value,
         notes: (form.elements.namedItem("notes") as HTMLTextAreaElement).value || null,
         confirmed: true,
+        upload_passcode: uploadPasscodeEnabled
+          ? (form.elements.namedItem("upload_passcode") as HTMLInputElement).value
+          : null,
         file_name: file.name,
         file_size_bytes: file.size
       };
@@ -171,6 +174,12 @@ export function UploadForm() {
             <span>הערות לצוות</span>
             <textarea name="notes" rows={3} placeholder="למשל: להניח במעטפה על שם..." />
           </label>
+          {uploadPasscodeEnabled ? (
+            <label>
+              <span>קוד העלאה *</span>
+              <input name="upload_passcode" type="password" required autoComplete="off" />
+            </label>
+          ) : null}
           <label className="file-drop full">
             <span>קובץ PDF *</span>
             <input

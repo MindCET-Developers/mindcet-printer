@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { UploadForm } from "./upload-form";
+import { isSupabaseConfigured } from "@/lib/env";
+import { readAppSettings } from "@/lib/settings";
+import { createServiceClient } from "@/lib/supabase-admin";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const settings = isSupabaseConfigured() ? await readAppSettings(createServiceClient()) : null;
+  const uploadPasscodeEnabled = Boolean(settings?.upload_passcode_enabled);
+
   return (
     <main className="public-shell sunny-shell">
       <header className="public-hero sunny-hero">
@@ -32,7 +40,7 @@ export default function HomePage() {
             <p>העלאת קובץ PDF להדפסה במדפסת המתחם</p>
           </div>
         </div>
-        <UploadForm />
+        <UploadForm uploadPasscodeEnabled={uploadPasscodeEnabled} />
       </section>
     </main>
   );

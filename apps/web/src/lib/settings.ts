@@ -6,7 +6,9 @@ export const defaultSettings: AppSettings = {
   manual_approval_required: true,
   max_file_size_mb: Number(process.env.MAX_FILE_SIZE_MB || 20),
   max_page_count: Number(process.env.MAX_PAGE_COUNT || 50),
-  upload_passcode_enabled: false
+  upload_passcode_enabled: false,
+  upload_passcode_hash: null,
+  upload_passcode_configured: Boolean(process.env.UPLOAD_PASSCODE?.trim())
 };
 
 export async function readAppSettings(supabase: ReturnType<typeof import("./supabase-admin").createServiceClient>) {
@@ -16,10 +18,15 @@ export async function readAppSettings(supabase: ReturnType<typeof import("./supa
     return defaultSettings;
   }
 
-  return data.reduce<AppSettings>((settings, row: { key: string; value: unknown }) => {
-    if (row.key in settings) {
-      return { ...settings, [row.key]: row.value };
+  const settings = data.reduce<AppSettings>((current, row: { key: string; value: unknown }) => {
+    if (row.key in current) {
+      return { ...current, [row.key]: row.value };
     }
-    return settings;
+    return current;
   }, defaultSettings);
+
+  return {
+    ...settings,
+    upload_passcode_configured: Boolean(settings.upload_passcode_hash || process.env.UPLOAD_PASSCODE?.trim())
+  };
 }
