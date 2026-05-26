@@ -12,6 +12,11 @@ export function UploadForm({ uploadPasscodeEnabled }: { uploadPasscodeEnabled?: 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [state, setState] = useState<SubmitState>({ type: "idle" });
+  const [requiresPasscode, setRequiresPasscode] = useState(Boolean(uploadPasscodeEnabled));
+
+  useEffect(() => {
+    setRequiresPasscode(Boolean(uploadPasscodeEnabled));
+  }, [uploadPasscodeEnabled]);
 
   useEffect(() => {
     if (!file) {
@@ -68,7 +73,7 @@ export function UploadForm({ uploadPasscodeEnabled }: { uploadPasscodeEnabled?: 
         duplex_mode: (form.elements.namedItem("duplex_mode") as HTMLSelectElement).value,
         notes: (form.elements.namedItem("notes") as HTMLTextAreaElement).value || null,
         confirmed: true,
-        upload_passcode: uploadPasscodeEnabled
+        upload_passcode: requiresPasscode
           ? (form.elements.namedItem("upload_passcode") as HTMLInputElement).value
           : null,
         file_name: file.name,
@@ -83,6 +88,9 @@ export function UploadForm({ uploadPasscodeEnabled }: { uploadPasscodeEnabled?: 
       const createPayload = await createRes.json();
 
       if (!createRes.ok) {
+        if (createRes.status === 401 || createPayload.error?.includes("קוד")) {
+          setRequiresPasscode(true);
+        }
         setState({ type: "error", message: createPayload.error || "יצירת העבודה נכשלה." });
         return;
       }
@@ -174,7 +182,7 @@ export function UploadForm({ uploadPasscodeEnabled }: { uploadPasscodeEnabled?: 
             <span>הערות לצוות</span>
             <textarea name="notes" rows={3} placeholder="למשל: להניח במעטפה על שם..." />
           </label>
-          {uploadPasscodeEnabled ? (
+          {requiresPasscode ? (
             <label>
               <span>קוד העלאה *</span>
               <input name="upload_passcode" type="password" required autoComplete="off" />
