@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
   const jobId = randomUUID();
   const statusToken = randomBytes(32).toString("hex");
   const safeFileName = sanitizePdfFileName(fileName);
-  const filePath = `print-jobs/${jobId}/${safeFileName}`;
+  const filePath = `print-jobs/${jobId}/document.pdf`;
 
   const { error: insertError } = await supabase.from("print_jobs").insert({
     id: jobId,

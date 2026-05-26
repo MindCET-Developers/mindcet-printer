@@ -49,22 +49,80 @@ export function UploadForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!file) {
+      setState({ type: "error", message: "יש לבחור קובץ PDF." });
+      return;
+    }
     setState({ type: "submitting" });
 
     try {
-      const response = await fetch("/api/jobs/create", {
-        method: "POST",
-        body: new FormData(event.currentTarget)
-      });
-      const payload = await response.json();
+      // Step 1: Create job and get signed upload URL
+      const form = event.currentTarget;
+      const metadata = {
+        user_name: (form.elements.namedItem("user_name") as HTMLInputElement).value,
+        user_email: (form.elements.namedItem("user_email") as HTMLInputElement).value || null,
+        user_phone: (form.elements.namedItem("user_phone") as HTMLInputElement).value || null,
+        room_or_company: (form.elements.namedItem("room_or_company") as HTMLInputElement).value || null,
+        copies: Number((form.elements.namedItem("copies") as HTMLInputElement).value),
+        color_mode: (form.elements.namedItem("color_mode") as HTMLSelectElement).value,
+        duplex_mode: (form.elements.namedItem("duplex_mode") as HTMLSelectElement).value,
+        notes: (form.elements.namedItem("notes") as HTMLTextAreaElement).value || null,
+        confirmed: true,
+        file_name: file.name,
+        file_size_bytes: file.size
+      };
 
-      if (!response.ok) {
-        setState({ type: "error", message: payload.error || "העלאת העבודה נכשלה." });
+      const createRes = await fetch("/api/jobs/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(metadata)
+      });
+      const createPayload = await createRes.json();
+
+      if (!createRes.ok) {
+        setState({ type: "error", message: createPayload.error || "יצירת העבודה נכשלה." });
+        return;
+      }
+
+      const { jobId, statusToken, uploadUrl, statusUrl } = createPayload as {
+        jobId: string;
+        statusToken: string;
+        uploadUrl: string;
+        statusUrl: string;
+      };
+
+      // Step 2: Upload PDF directly to Supabase Storage
+      const uploadRes = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": "application/pdf" },
+        body: file
+      });
+
+      if (!uploadRes.ok) {
+        await fetch(`/api/jobs/${jobId}/fail-upload`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ statusToken })
+        }).catch(() => undefined);
+        setState({ type: "error", message: "העלאת הקובץ נכשלה. נסו שוב." });
+        return;
+      }
+
+      // Step 3: Confirm upload complete
+      const confirmRes = await fetch(`/api/jobs/${jobId}/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ statusToken })
+      });
+      const confirmPayload = await confirmRes.json();
+
+      if (!confirmRes.ok) {
+        setState({ type: "error", message: confirmPayload.error || "אישור ההעלאה נכשל." });
         return;
       }
 
       setState({ type: "success", message: "העבודה נוצרה. מעבירים אותך לעמוד הסטטוס." });
-      window.location.href = payload.statusUrl;
+      window.location.href = statusUrl;
     } catch {
       setState({ type: "error", message: "לא ניתן להתחבר לשרת כרגע." });
     }
