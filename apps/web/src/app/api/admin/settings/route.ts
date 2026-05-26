@@ -52,13 +52,22 @@ export async function PUT(request: NextRequest) {
   }
 
   if (uploadPasscode) {
-    const { error } = await admin.supabase.from("app_settings").upsert({
+    const { error: hashError } = await admin.supabase.from("app_settings").upsert({
       key: "upload_passcode_hash",
       value: hashPasscode(uploadPasscode)
     });
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (hashError) {
+      return NextResponse.json({ error: hashError.message }, { status: 500 });
+    }
+
+    const { error: valueError } = await admin.supabase.from("app_settings").upsert({
+      key: "upload_passcode_value",
+      value: uploadPasscode
+    });
+
+    if (valueError) {
+      return NextResponse.json({ error: valueError.message }, { status: 500 });
     }
   }
 

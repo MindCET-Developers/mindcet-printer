@@ -15,6 +15,7 @@ export function SettingsView() {
 function SettingsInner({ token }: { token: string }) {
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [message, setMessage] = useState("");
+  const [showUploadPasscode, setShowUploadPasscode] = useState(false);
 
   async function loadSettings() {
     const response = await fetch("/api/admin/settings", {
@@ -97,6 +98,20 @@ function SettingsInner({ token }: { token: string }) {
             type="password"
             placeholder={settings.upload_passcode_configured ? "מוגדר - השאירו ריק כדי לא לשנות" : "יש להזין קוד לפני הפעלה"}
           />
+        </label>
+        <label>
+          <span>קוד העלאה נוכחי</span>
+          <div className="inline-control">
+            <input
+              readOnly
+              type={showUploadPasscode ? "text" : "password"}
+              value={settings.upload_passcode_value || ""}
+              placeholder={settings.upload_passcode_configured ? "לא ניתן להציג קוד שנשמר לפני העדכון" : "לא מוגדר"}
+            />
+            <button type="button" onClick={() => setShowUploadPasscode((visible) => !visible)}>
+              {showUploadPasscode ? "הסתר" : "הצג"}
+            </button>
+          </div>
         </label>
         <label>
           <span>גודל קובץ מקסימלי ב-MB</span>

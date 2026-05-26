@@ -69,5 +69,6 @@ export type AppSettings = {
   max_page_count: number;
   upload_passcode_enabled: boolean;
   upload_passcode_hash?: string | null;
+  upload_passcode_value?: string | null;
   upload_passcode_configured?: boolean;
 };

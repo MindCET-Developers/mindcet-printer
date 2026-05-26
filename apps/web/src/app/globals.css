@@ -751,6 +751,22 @@ pre {
   padding: 20px;
 }
 
+.inline-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.inline-control button {
+  min-width: 84px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffdf2;
+  color: var(--ink);
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .login-lockup {
   margin: 0 0 20px;
   padding: 12px;

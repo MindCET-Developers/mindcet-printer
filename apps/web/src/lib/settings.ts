@@ -8,6 +8,7 @@ export const defaultSettings: AppSettings = {
   max_page_count: Number(process.env.MAX_PAGE_COUNT || 50),
   upload_passcode_enabled: false,
   upload_passcode_hash: null,
+  upload_passcode_value: null,
   upload_passcode_configured: Boolean(process.env.UPLOAD_PASSCODE?.trim())
 };
 
